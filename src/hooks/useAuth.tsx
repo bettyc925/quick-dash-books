@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { useIdleTimer } from './useIdleTimer';
 
 interface Profile {
   id: string;
@@ -53,6 +54,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     return data;
   };
+
+  const signOutUser = async () => {
+    // Clear selected business and client when signing out
+    localStorage.removeItem('selectedBusiness');
+    localStorage.removeItem('selectedClient');
+    await supabase.auth.signOut();
+  };
+
+  // Auto sign out after 30 minutes of inactivity
+  useIdleTimer({
+    timeout: 30 * 60 * 1000, // 30 minutes in milliseconds
+    onTimeout: () => {
+      if (user) {
+        console.log('Auto signing out due to inactivity');
+        signOutUser();
+      }
+    }
+  });
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -126,13 +145,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
-  const signOut = async () => {
-    // Clear selected business and client when signing out
-    localStorage.removeItem('selectedBusiness');
-    localStorage.removeItem('selectedClient');
-    await supabase.auth.signOut();
-  };
-
   const resetPassword = async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth`,
@@ -157,7 +169,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loading,
     signUp,
     signIn,
-    signOut,
+    signOut: signOutUser,
     resetPassword,
     verifyMFA,
   };
