@@ -2,6 +2,8 @@ import MainLayout from "@/components/Layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import ReportFilters from "@/components/ReportFilters";
+import FinancialReportHeader from "@/components/FinancialReportHeader";
+import ReportFooter from "@/components/ReportFooter";
 import { 
   TrendingDown,
   Users,
@@ -122,9 +124,16 @@ const ExpenseReports = () => {
   return (
     <MainLayout title="Expense Reports" headerActions={headerActions}>
       <div className="space-y-6">
+        {/* Expense Report Header */}
+        <FinancialReportHeader 
+          reportTitle="Expense & Vendor Reports"
+          reportPeriod="March 1, 2024 - March 31, 2024"
+          subtitle="Business Expense Analysis & Vendor Performance"
+        />
+
         {/* Expense Report Filters */}
         <ReportFilters 
-          onFiltersChange={(filters) => console.log('Expense filters:', filters)}
+          onFiltersChange={(filters) => console.log("Expense filters:", filters)}
           showCustomerFilter={false}
         />
 
@@ -243,6 +252,11 @@ const ExpenseReports = () => {
             </Card>
           </div>
         </div>
+        
+        {/* Report Footer */}
+        <ReportFooter 
+          disclaimer="Expense reports include all business expenditures and vendor transactions for tax and compliance purposes."
+        />
       </div>
     </MainLayout>
   );

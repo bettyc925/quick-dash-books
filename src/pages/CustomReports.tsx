@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import ReportFilters from "@/components/ReportFilters";
+import FinancialReportHeader from "@/components/FinancialReportHeader";
+import ReportFooter from "@/components/ReportFooter";
 import { 
   Plus,
   Settings,
@@ -133,9 +135,16 @@ const CustomReports = () => {
   return (
     <MainLayout title="Custom Reports" headerActions={headerActions}>
       <div className="space-y-6">
+        {/* Custom Report Header */}
+        <FinancialReportHeader 
+          reportTitle="Custom Reports & Analytics"
+          reportPeriod="User-Defined Period"
+          subtitle="Customized Business Intelligence Reports"
+        />
+
         {/* Custom Report Filters */}
         <ReportFilters 
-          onFiltersChange={(filters) => console.log('Custom report filters:', filters)}
+          onFiltersChange={(filters) => console.log("Custom report filters:", filters)}
         />
 
         {/* Report Statistics */}
@@ -276,6 +285,11 @@ const CustomReports = () => {
             </CardContent>
           </Card>
         </div>
+        
+        {/* Report Footer */}
+        <ReportFooter 
+          disclaimer="Custom reports are user-generated and may contain personalized business logic and calculations."
+        />
       </div>
     </MainLayout>
   );

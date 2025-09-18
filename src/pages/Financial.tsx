@@ -2,6 +2,8 @@ import MainLayout from "@/components/Layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import ReportFilters from "@/components/ReportFilters";
+import FinancialReportHeader from "@/components/FinancialReportHeader";
+import ReportFooter from "@/components/ReportFooter";
 import { 
   TrendingUp,
   BarChart3,
@@ -120,9 +122,16 @@ const Financial = () => {
   return (
     <MainLayout title="Financial Reports" headerActions={headerActions}>
       <div className="space-y-6">
+        {/* Financial Report Header */}
+        <FinancialReportHeader 
+          reportTitle="Financial Reports"
+          reportPeriod="March 1, 2024 - March 31, 2024"
+          subtitle="Core Financial Statements"
+        />
+
         {/* Financial Report Filters */}
         <ReportFilters 
-          onFiltersChange={(filters) => console.log('Financial filters:', filters)}
+          onFiltersChange={(filters) => console.log("Financial filters:", filters)}
           showCustomerFilter={false}
           showVendorFilter={false}
           showTransactionType={false}
@@ -196,6 +205,11 @@ const Financial = () => {
             </div>
           </CardContent>
         </Card>
+        
+        {/* Report Footer */}
+        <ReportFooter 
+          disclaimer="These financial reports are prepared in accordance with Generally Accepted Accounting Principles (GAAP)."
+        />
       </div>
     </MainLayout>
   );

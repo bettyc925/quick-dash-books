@@ -2,6 +2,8 @@ import MainLayout from "@/components/Layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import ReportFilters from "@/components/ReportFilters";
+import FinancialReportHeader from "@/components/FinancialReportHeader";
+import ReportFooter from "@/components/ReportFooter";
 import { 
   TrendingUp,
   Users,
@@ -113,9 +115,16 @@ const SalesReports = () => {
   return (
     <MainLayout title="Sales Reports" headerActions={headerActions}>
       <div className="space-y-6">
+        {/* Sales Report Header */}
+        <FinancialReportHeader 
+          reportTitle="Sales & Revenue Reports"
+          reportPeriod="March 1, 2024 - March 31, 2024"
+          subtitle="Customer & Product Performance Analysis"
+        />
+
         {/* Sales Report Filters */}
         <ReportFilters 
-          onFiltersChange={(filters) => console.log('Sales filters:', filters)}
+          onFiltersChange={(filters) => console.log("Sales filters:", filters)}
           showVendorFilter={false}
           showTransactionType={false}
         />
@@ -211,6 +220,11 @@ const SalesReports = () => {
             </CardContent>
           </Card>
         </div>
+        
+        {/* Report Footer */}
+        <ReportFooter 
+          disclaimer="Sales reports include all revenue transactions and customer activity for the specified period."
+        />
       </div>
     </MainLayout>
   );
