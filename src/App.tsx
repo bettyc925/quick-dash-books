@@ -16,6 +16,16 @@ import Customers from "./pages/Customers";
 import Invoices from "./pages/Invoices";
 import Estimates from "./pages/Estimates";
 import Products from "./pages/Products";
+import Bills from "./pages/Bills";
+import Vendors from "./pages/Vendors";
+import PurchaseOrders from "./pages/PurchaseOrders";
+import Accounts from "./pages/Accounts";
+import Transactions from "./pages/Transactions";
+import Reconciliation from "./pages/Reconciliation";
+import Financial from "./pages/Financial";
+import SalesReports from "./pages/SalesReports";
+import ExpenseReports from "./pages/ExpenseReports";
+import CustomReports from "./pages/CustomReports";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 
@@ -60,6 +70,16 @@ const AppRoutes = () => {
       <Route path="/sales/estimates" element={<ProtectedRoute><Estimates /></ProtectedRoute>} />
       <Route path="/sales/products" element={<ProtectedRoute><Products /></ProtectedRoute>} />
       <Route path="/expenses" element={<ProtectedRoute><Expenses /></ProtectedRoute>} />
+      <Route path="/expenses/bills" element={<ProtectedRoute><Bills /></ProtectedRoute>} />
+      <Route path="/expenses/vendors" element={<ProtectedRoute><Vendors /></ProtectedRoute>} />
+      <Route path="/expenses/purchase-orders" element={<ProtectedRoute><PurchaseOrders /></ProtectedRoute>} />
+      <Route path="/banking/accounts" element={<ProtectedRoute><Accounts /></ProtectedRoute>} />
+      <Route path="/banking/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
+      <Route path="/banking/reconcile" element={<ProtectedRoute><Reconciliation /></ProtectedRoute>} />
+      <Route path="/reports/financial" element={<ProtectedRoute><Financial /></ProtectedRoute>} />
+      <Route path="/reports/sales" element={<ProtectedRoute><SalesReports /></ProtectedRoute>} />
+      <Route path="/reports/expenses" element={<ProtectedRoute><ExpenseReports /></ProtectedRoute>} />
+      <Route path="/reports/custom" element={<ProtectedRoute><CustomReports /></ProtectedRoute>} />
       <Route path="/banking" element={<ProtectedRoute><Banking /></ProtectedRoute>} />
       <Route path="/accountant" element={<ProtectedRoute><Accountant /></ProtectedRoute>} />
       <Route path="/payroll" element={<ProtectedRoute><Payroll /></ProtectedRoute>} />
