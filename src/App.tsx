@@ -26,6 +26,7 @@ import Financial from "./pages/Financial";
 import SalesReports from "./pages/SalesReports";
 import ExpenseReports from "./pages/ExpenseReports";
 import CustomReports from "./pages/CustomReports";
+import TestUsers from "./pages/TestUsers";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 
@@ -80,6 +81,7 @@ const AppRoutes = () => {
       <Route path="/reports/sales" element={<ProtectedRoute><SalesReports /></ProtectedRoute>} />
       <Route path="/reports/expenses" element={<ProtectedRoute><ExpenseReports /></ProtectedRoute>} />
       <Route path="/reports/custom" element={<ProtectedRoute><CustomReports /></ProtectedRoute>} />
+      <Route path="/test-users" element={<TestUsers />} />
       <Route path="/banking" element={<ProtectedRoute><Banking /></ProtectedRoute>} />
       <Route path="/accountant" element={<ProtectedRoute><Accountant /></ProtectedRoute>} />
       <Route path="/payroll" element={<ProtectedRoute><Payroll /></ProtectedRoute>} />
