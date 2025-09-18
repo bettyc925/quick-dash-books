@@ -18,7 +18,10 @@ export type Database = {
         Row: {
           address: string | null
           created_at: string
+          currency: string
           email: string | null
+          fiscal_year_end: string | null
+          gaap_standard: string | null
           id: string
           industry: string | null
           name: string
@@ -29,7 +32,10 @@ export type Database = {
         Insert: {
           address?: string | null
           created_at?: string
+          currency?: string
           email?: string | null
+          fiscal_year_end?: string | null
+          gaap_standard?: string | null
           id?: string
           industry?: string | null
           name: string
@@ -40,7 +46,10 @@ export type Database = {
         Update: {
           address?: string | null
           created_at?: string
+          currency?: string
           email?: string | null
+          fiscal_year_end?: string | null
+          gaap_standard?: string | null
           id?: string
           industry?: string | null
           name?: string
@@ -49,6 +58,217 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      company_merge_requests: {
+        Row: {
+          approved_at: string | null
+          approver_id: string | null
+          created_at: string | null
+          id: string
+          reason: string
+          rejection_reason: string | null
+          requested_by: string
+          source_company_id: string
+          status: string | null
+          target_company_id: string
+          updated_at: string | null
+          verification_code: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approver_id?: string | null
+          created_at?: string | null
+          id?: string
+          reason: string
+          rejection_reason?: string | null
+          requested_by: string
+          source_company_id: string
+          status?: string | null
+          target_company_id: string
+          updated_at?: string | null
+          verification_code: string
+        }
+        Update: {
+          approved_at?: string | null
+          approver_id?: string | null
+          created_at?: string | null
+          id?: string
+          reason?: string
+          rejection_reason?: string | null
+          requested_by?: string
+          source_company_id?: string
+          status?: string | null
+          target_company_id?: string
+          updated_at?: string | null
+          verification_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_merge_requests_source_company_id_fkey"
+            columns: ["source_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_merge_requests_target_company_id_fkey"
+            columns: ["target_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consolidation_groups: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          gaap_standard: string | null
+          id: string
+          name: string
+          parent_company_id: string | null
+          reporting_currency: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          gaap_standard?: string | null
+          id?: string
+          name: string
+          parent_company_id?: string | null
+          reporting_currency?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          gaap_standard?: string | null
+          id?: string
+          name?: string
+          parent_company_id?: string | null
+          reporting_currency?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consolidation_groups_parent_company_id_fkey"
+            columns: ["parent_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consolidation_members: {
+        Row: {
+          company_id: string
+          consolidation_method: string | null
+          created_at: string | null
+          effective_date: string | null
+          group_id: string
+          id: string
+          ownership_percentage: number | null
+        }
+        Insert: {
+          company_id: string
+          consolidation_method?: string | null
+          created_at?: string | null
+          effective_date?: string | null
+          group_id: string
+          id?: string
+          ownership_percentage?: number | null
+        }
+        Update: {
+          company_id?: string
+          consolidation_method?: string | null
+          created_at?: string | null
+          effective_date?: string | null
+          group_id?: string
+          id?: string
+          ownership_percentage?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consolidation_members_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consolidation_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "consolidation_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exchange_rates: {
+        Row: {
+          created_at: string | null
+          effective_date: string
+          from_currency: string
+          id: string
+          rate: number
+          to_currency: string
+        }
+        Insert: {
+          created_at?: string | null
+          effective_date: string
+          from_currency: string
+          id?: string
+          rate: number
+          to_currency: string
+        }
+        Update: {
+          created_at?: string | null
+          effective_date?: string
+          from_currency?: string
+          id?: string
+          rate?: number
+          to_currency?: string
+        }
+        Relationships: []
+      }
+      merge_request_approvals: {
+        Row: {
+          approved_at: string | null
+          approver_id: string
+          company_relationship_confirmed: boolean | null
+          id: string
+          merge_request_id: string
+          notes: string | null
+          verification_code_entered: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approver_id: string
+          company_relationship_confirmed?: boolean | null
+          id?: string
+          merge_request_id: string
+          notes?: string | null
+          verification_code_entered: string
+        }
+        Update: {
+          approved_at?: string | null
+          approver_id?: string
+          company_relationship_confirmed?: boolean | null
+          id?: string
+          merge_request_id?: string
+          notes?: string | null
+          verification_code_entered?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "merge_request_approvals_merge_request_id_fkey"
+            columns: ["merge_request_id"]
+            isOneToOne: false
+            referencedRelation: "company_merge_requests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -129,7 +349,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_verification_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       user_role:
