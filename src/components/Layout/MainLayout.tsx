@@ -82,7 +82,7 @@ export default function MainLayout({
           <div className="flex h-16 items-center justify-between px-4 border-b bg-gradient-qb">
             {sidebarOpen && (
               <h1 className="text-xl font-bold text-primary-foreground">
-                QuickBooks
+                Betty's Books
               </h1>
             )}
             <Button

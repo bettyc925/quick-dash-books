@@ -11,7 +11,7 @@ const ReportFooter = ({
   generatedAt = new Date(),
   pageNumber = 1,
   totalPages = 1,
-  disclaimer = "This report is generated from QuickBooks data and is for internal use only."
+  disclaimer = "This report is generated from Betty's Books data and is for internal use only."
 }: ReportFooterProps) => {
   return (
     <div className="border-t border-border mt-8 pt-4 text-xs text-muted-foreground">
@@ -33,7 +33,7 @@ const ReportFooter = ({
       
       <div className="text-center mt-4 pt-2 border-t border-border">
         <p className="text-xs">
-          © {new Date().getFullYear()} QuickBooks Pro. All financial data is confidential and proprietary.
+          © {new Date().getFullYear()} Betty's Books Pro. All financial data is confidential and proprietary.
         </p>
       </div>
     </div>

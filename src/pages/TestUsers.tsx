@@ -76,7 +76,7 @@ const TestUsers = () => {
         <div className="text-center">
           <h1 className="text-3xl font-bold text-foreground mb-2">Test Users Setup</h1>
           <p className="text-muted-foreground">
-            Create test user accounts for your QuickBooks application
+            Create test user accounts for your Betty's Books application
           </p>
         </div>
 
