@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
+import { useCompany } from '@/contexts/CompanyContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Plus, Building2, Mail, Phone, MapPin } from 'lucide-react';
@@ -19,11 +20,12 @@ interface Company {
   user_role: string;
 }
 
-const ClientList = () => {
+const CompanySelection = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [companies, setCompanies] = useState<Company[]>([]);
   
   const { user, profile } = useAuth();
+  const { setSelectedCompany } = useCompany();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -33,14 +35,9 @@ const ClientList = () => {
       return;
     }
 
-    // Only bookkeepers can see client list
-    if (!profile?.role.startsWith('bookkeeper')) {
-      navigate('/dashboard');
-      return;
-    }
-
+    // All authenticated users should see company selection
     fetchCompanies();
-  }, [user, profile, navigate]);
+  }, [user, navigate]);
 
   const fetchCompanies = async () => {
     if (!user) return;
@@ -84,8 +81,9 @@ const ClientList = () => {
     }
   };
 
-  const handleSelectClient = (companyId: string) => {
-    navigate(`/dashboard?company=${companyId}`);
+  const handleSelectCompany = (company: Company) => {
+    setSelectedCompany(company);
+    navigate('/dashboard');
   };
 
   if (isLoading) {
@@ -93,7 +91,7 @@ const ClientList = () => {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-qb-blue mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading your clients...</p>
+          <p className="text-muted-foreground">Loading your companies...</p>
         </div>
       </div>
     );
@@ -104,9 +102,9 @@ const ClientList = () => {
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-qb-blue">Your Clients</h1>
+            <h1 className="text-3xl font-bold text-qb-blue">Select Company</h1>
             <p className="text-muted-foreground mt-2">
-              Select a client to manage their books
+              Choose which company you'd like to work with
             </p>
           </div>
           <Link to="/create-client">
@@ -120,14 +118,14 @@ const ClientList = () => {
         {companies.length === 0 ? (
           <div className="text-center py-12">
             <Building2 className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-xl font-semibold mb-2">No Clients Yet</h2>
+            <h2 className="text-xl font-semibold mb-2">No Companies Yet</h2>
             <p className="text-muted-foreground mb-6">
-              Start by adding your first client company
+              Start by adding your first company
             </p>
             <Link to="/create-client">
               <Button className="bg-qb-blue hover:bg-qb-blue-dark">
                 <Plus className="w-4 h-4 mr-2" />
-                Add Your First Client
+                Add Your First Company
               </Button>
             </Link>
           </div>
@@ -137,7 +135,7 @@ const ClientList = () => {
               <Card
                 key={company.id}
                 className="cursor-pointer hover:shadow-lg transition-shadow"
-                onClick={() => handleSelectClient(company.id)}
+                onClick={() => handleSelectCompany(company)}
               >
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -188,4 +186,4 @@ const ClientList = () => {
   );
 };
 
-export default ClientList;
+export default CompanySelection;

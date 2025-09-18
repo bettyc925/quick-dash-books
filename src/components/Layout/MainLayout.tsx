@@ -12,11 +12,13 @@ import {
   X,
   ChevronRight,
   LogOut,
-  User
+  User,
+  ArrowLeft
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import { useCompany } from "@/contexts/CompanyContext";
 import { Badge } from "@/components/ui/badge";
 
 const navigationItems = [
@@ -34,6 +36,7 @@ const navigationItems = [
   },
   { name: "Expenses", href: "/expenses", icon: CreditCard, roles: ['admin', 'user', 'manager'] },
   { name: "Banking", href: "/banking", icon: Banknote, roles: ['admin', 'manager'] },
+  { name: "Clients", href: "/clients", icon: Users, roles: ['admin', 'user', 'manager'] },
   { name: "Accountant", href: "/accountant", icon: FileText, roles: ['admin'] },
   { name: "Payroll", href: "/payroll", icon: Users, roles: ['admin', 'manager'] },
   { name: "Taxes", href: "/taxes", icon: Receipt, roles: ['admin'] },
@@ -60,6 +63,7 @@ export default function MainLayout({
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const location = useLocation();
   const { profile, signOut } = useAuth();
+  const { selectedCompany, clearSelectedCompany } = useCompany();
 
   const isActive = (href: string) => {
     if (href === "/") return location.pathname === "/";
@@ -214,6 +218,20 @@ export default function MainLayout({
         <header className="bg-card border-b shadow-qb-sm">
           <div className="flex h-16 items-center justify-between px-6">
             <div className="flex items-center space-x-4">
+              {selectedCompany && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    clearSelectedCompany();
+                    window.location.href = '/company-selection';
+                  }}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  {selectedCompany.name}
+                </Button>
+              )}
               <h2 className="text-2xl font-semibold text-foreground">{title}</h2>
             </div>
             {headerActions && (

@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
+import { CompanyProvider, useCompany } from "./contexts/CompanyContext";
 import Dashboard from "./pages/Dashboard";
 import Sales from "./pages/Sales";
 import Expenses from "./pages/Expenses";
@@ -32,12 +33,14 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import ProfileSetup from "./pages/ProfileSetup";
 import CreateClient from "./pages/CreateClient";
-import ClientList from "./pages/ClientList";
+import CompanySelection from "./pages/CompanySelection";
+import Clients from "./pages/Clients";
 
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
+  const { selectedCompany } = useCompany();
   
   if (loading) {
     return (
@@ -49,11 +52,25 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
   
-  return user ? <>{children}</> : <Navigate to="/auth" replace />;
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  // If user is authenticated but hasn't selected a company, redirect to company selection
+  // unless they're on company-related pages
+  const currentPath = window.location.pathname;
+  const companyRelatedPaths = ['/company-selection', '/create-client', '/profile-setup'];
+  
+  if (!selectedCompany && !companyRelatedPaths.some(path => currentPath.includes(path))) {
+    return <Navigate to="/company-selection" replace />;
+  }
+  
+  return <>{children}</>;
 };
 
 const AppRoutes = () => {
   const { user, profile, loading } = useAuth();
+  const { selectedCompany } = useCompany();
   
   if (loading) {
     return (
@@ -74,16 +91,16 @@ const AppRoutes = () => {
     return <Navigate to="/profile-setup" replace />;
   }
 
-  // Smart routing based on user role after authentication
+  // Smart routing based on user authentication status
   const getDefaultRoute = () => {
     if (!user || !profile) return '/auth';
     
-    // Bookkeepers should see client list to select which company to manage
-    if (profile.role.startsWith('bookkeeper')) {
-      return '/client-list';
+    // If no company is selected, go to company selection
+    if (!selectedCompany) {
+      return '/company-selection';
     }
     
-    // Clients should see their company dashboard directly
+    // Otherwise go to dashboard
     return '/dashboard';
   };
   
@@ -92,7 +109,8 @@ const AppRoutes = () => {
       <Route path="/auth" element={user ? <Navigate to={getDefaultRoute()} replace /> : <Auth />} />
       <Route path="/profile-setup" element={<ProtectedRoute><ProfileSetup /></ProtectedRoute>} />
       <Route path="/create-client" element={<ProtectedRoute><CreateClient /></ProtectedRoute>} />
-      <Route path="/client-list" element={<ProtectedRoute><ClientList /></ProtectedRoute>} />
+      <Route path="/company-selection" element={<ProtectedRoute><CompanySelection /></ProtectedRoute>} />
+      <Route path="/clients" element={<ProtectedRoute><Clients /></ProtectedRoute>} />
       <Route path="/" element={<ProtectedRoute><Navigate to={getDefaultRoute()} replace /></ProtectedRoute>} />
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/sales" element={<ProtectedRoute><Sales /></ProtectedRoute>} />
@@ -131,7 +149,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <AppRoutes />
+          <CompanyProvider>
+            <AppRoutes />
+          </CompanyProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
