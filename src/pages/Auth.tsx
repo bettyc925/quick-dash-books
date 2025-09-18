@@ -40,7 +40,8 @@ const Auth = () => {
 
   useEffect(() => {
     if (user) {
-      navigate('/');
+      // Force redirect to company selection if user is logged in
+      window.location.href = '/company-selection';
     }
   }, [user, navigate]);
 
