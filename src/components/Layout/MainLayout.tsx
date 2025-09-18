@@ -10,10 +10,14 @@ import {
   Settings,
   Menu,
   X,
-  ChevronRight
+  ChevronRight,
+  LogOut,
+  User
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
+import { Badge } from "@/components/ui/badge";
 
 const navigationItems = [
   { name: "Dashboard", href: "/", icon: Home },
@@ -43,10 +47,15 @@ export default function MainLayout({
 }: MainLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const location = useLocation();
+  const { profile, signOut } = useAuth();
 
   const isActive = (href: string) => {
     if (href === "/") return location.pathname === "/";
     return location.pathname.startsWith(href);
+  };
+
+  const handleLogout = async () => {
+    await signOut();
   };
 
   return (
@@ -101,8 +110,28 @@ export default function MainLayout({
             })}
           </nav>
 
-          {/* Settings */}
-          <div className="p-4 border-t">
+          {/* User Profile & Settings */}
+          <div className="p-4 border-t space-y-2">
+            {/* User Info */}
+            {sidebarOpen && profile && (
+              <div className="flex items-center space-x-3 p-2 rounded-md bg-accent/50">
+                <div className="flex-shrink-0">
+                  <User className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">
+                    {profile.company_name}
+                  </p>
+                  <div className="flex items-center space-x-1">
+                    <Badge variant="secondary" className="text-xs">
+                      {profile.role}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Settings */}
             <NavLink
               to="/settings"
               className={cn(
@@ -116,6 +145,22 @@ export default function MainLayout({
               )} />
               {sidebarOpen && "Settings"}
             </NavLink>
+            
+            {/* Logout */}
+            <Button
+              variant="ghost"
+              onClick={handleLogout}
+              className={cn(
+                "w-full justify-start text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive",
+                sidebarOpen ? "" : "px-2"
+              )}
+            >
+              <LogOut className={cn(
+                "h-5 w-5 flex-shrink-0",
+                sidebarOpen ? "mr-3" : ""
+              )} />
+              {sidebarOpen && "Logout"}
+            </Button>
           </div>
         </div>
       </div>
