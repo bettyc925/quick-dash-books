@@ -80,7 +80,7 @@ export default function MainLayout({
     <div className="min-h-screen bg-background">
       {/* Sidebar */}
       <div className={cn(
-        "fixed inset-y-0 left-0 z-50 bg-card border-r transition-all duration-300",
+        "fixed inset-y-0 left-0 z-50 bg-gradient-sidebar border-r transition-all duration-300",
         sidebarOpen ? "w-64" : "w-16"
       )}>
         <div className="flex h-full flex-col">
@@ -227,7 +227,7 @@ export default function MainLayout({
         sidebarOpen ? "ml-64" : "ml-16"
       )}>
         {/* Header */}
-        <header className="bg-card border-b shadow-qb-sm">
+        <header className="bg-gradient-card border-b shadow-qb-md">
           <div className="flex h-16 items-center justify-between px-6">
             <div className="flex items-center space-x-4">
               <ClientSwitcher />

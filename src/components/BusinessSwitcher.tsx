@@ -26,7 +26,7 @@ const BusinessSwitcher = () => {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="w-full justify-between h-auto p-3 bg-gradient-qb text-primary-foreground hover:bg-qb-blue-light"
+          className="w-full justify-between h-auto p-3 bg-gradient-accent text-white hover:bg-qb-teal/20 shadow-qb-md"
         >
           <div className="flex items-center space-x-2 min-w-0">
             <Building2 className="h-5 w-5 flex-shrink-0" />
