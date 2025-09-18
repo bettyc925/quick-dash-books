@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +40,17 @@ const Auth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // TEMPORARY: Force logout for debugging
+    const forceLogout = async () => {
+      await supabase.auth.signOut();
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.reload();
+    };
+    
+    // Uncomment this line to force logout:
+    forceLogout();
+    
     if (user) {
       // Force redirect to company selection if user is logged in
       window.location.href = '/company-selection';
