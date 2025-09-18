@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -17,6 +18,9 @@ const CreateClient = () => {
   const [address, setAddress] = useState('');
   const [taxId, setTaxId] = useState('');
   const [industry, setIndustry] = useState('');
+  const [currency, setCurrency] = useState('USD');
+  const [gaapStandard, setGaapStandard] = useState('US_GAAP');
+  const [fiscalYearEnd, setFiscalYearEnd] = useState('2024-12-31');
   
   const { user, profile } = useAuth();
   const { toast } = useToast();
@@ -60,6 +64,9 @@ const CreateClient = () => {
           address: address,
           tax_id: taxId,
           industry: industry,
+          currency: currency,
+          gaap_standard: gaapStandard,
+          fiscal_year_end: fiscalYearEnd
         })
         .select()
         .single();
@@ -178,6 +185,47 @@ const CreateClient = () => {
                   onChange={(e) => setIndustry(e.target.value)}
                 />
               </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="currency">Base Currency</Label>
+                <Select value={currency} onValueChange={setCurrency}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select currency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="USD">USD - US Dollar</SelectItem>
+                    <SelectItem value="EUR">EUR - Euro</SelectItem>
+                    <SelectItem value="GBP">GBP - British Pound</SelectItem>
+                    <SelectItem value="CAD">CAD - Canadian Dollar</SelectItem>
+                    <SelectItem value="JPY">JPY - Japanese Yen</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="gaap-standard">GAAP Standard</Label>
+                <Select value={gaapStandard} onValueChange={setGaapStandard}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select GAAP standard" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="US_GAAP">US GAAP</SelectItem>
+                    <SelectItem value="IFRS">IFRS</SelectItem>
+                    <SelectItem value="OTHER">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="fiscal-year-end">Fiscal Year End</Label>
+              <Input
+                id="fiscal-year-end"
+                type="date"
+                value={fiscalYearEnd}
+                onChange={(e) => setFiscalYearEnd(e.target.value)}
+              />
             </div>
             
             <div className="flex gap-4 pt-4">

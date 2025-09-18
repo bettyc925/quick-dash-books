@@ -25,6 +25,8 @@ import Reconciliation from "./pages/Reconciliation";
 import Financial from "./pages/Financial";
 import SalesReports from "./pages/SalesReports";
 import ExpenseReports from "./pages/ExpenseReports";
+import Consolidations from "./pages/Consolidations";
+import CompanyMergeRequests from "./pages/CompanyMergeRequests";
 import CustomReports from "./pages/CustomReports";
 import TestUsers from "./pages/TestUsers";
 import NotFound from "./pages/NotFound";
@@ -97,6 +99,8 @@ const AppRoutes = () => {
       <Route path="/reports/sales" element={<ProtectedRoute><SalesReports /></ProtectedRoute>} />
       <Route path="/reports/expenses" element={<ProtectedRoute><ExpenseReports /></ProtectedRoute>} />
       <Route path="/reports/custom" element={<ProtectedRoute><CustomReports /></ProtectedRoute>} />
+      <Route path="/consolidations" element={<ProtectedRoute><Consolidations /></ProtectedRoute>} />
+      <Route path="/company-merge-requests" element={<ProtectedRoute><CompanyMergeRequests /></ProtectedRoute>} />
       <Route path="/test-users" element={<TestUsers />} />
       <Route path="/banking" element={<ProtectedRoute><Banking /></ProtectedRoute>} />
       <Route path="/accountant" element={<ProtectedRoute><Accountant /></ProtectedRoute>} />
