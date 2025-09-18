@@ -131,7 +131,9 @@ const Financial = () => {
 
         {/* Financial Report Filters */}
         <ReportFilters 
-          onFiltersChange={(filters) => console.log("Financial filters:", filters)}
+          onFiltersChange={(filters) => {
+            // Apply financial report filters
+          }}
           showCustomerFilter={false}
           showVendorFilter={false}
           showTransactionType={false}

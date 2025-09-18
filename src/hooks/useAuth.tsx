@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .single();
 
     if (error) {
-      console.error('Error fetching profile:', error);
+      // Silently handle profile fetch errors in production
       return null;
     }
     return data;
@@ -138,15 +138,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const verifyMFA = async (phone: string) => {
-    // This is a simplified MFA implementation
-    // In a real app, you'd integrate with a service like Twilio
-    try {
-      // For demo purposes, we'll just simulate sending an SMS
-      console.log(`MFA verification code sent to ${phone}`);
-      return { error: null };
-    } catch (error) {
-      return { error };
-    }
+    // MFA implementation not available in production
+    // This would typically integrate with a service like Twilio
+    return { 
+      error: { 
+        message: "Multi-factor authentication is not currently configured. Please contact support." 
+      } 
+    };
   };
 
   const value = {

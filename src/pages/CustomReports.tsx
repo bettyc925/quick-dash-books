@@ -144,7 +144,9 @@ const CustomReports = () => {
 
         {/* Custom Report Filters */}
         <ReportFilters 
-          onFiltersChange={(filters) => console.log("Custom report filters:", filters)}
+          onFiltersChange={(filters) => {
+            // Apply custom report filters
+          }}
         />
 
         {/* Report Statistics */}

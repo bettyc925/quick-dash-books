@@ -121,7 +121,9 @@ const Reports = () => {
 
         {/* Report Filters */}
         <ReportFilters 
-          onFiltersChange={(filters) => console.log("Filters changed:", filters)}
+          onFiltersChange={(filters) => {
+            // Apply report filters
+          }}
         />
 
         {/* Quick Report Summary */}

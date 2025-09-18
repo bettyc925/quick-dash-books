@@ -133,7 +133,9 @@ const ExpenseReports = () => {
 
         {/* Expense Report Filters */}
         <ReportFilters 
-          onFiltersChange={(filters) => console.log("Expense filters:", filters)}
+          onFiltersChange={(filters) => {
+            // Apply expense report filters
+          }}
           showCustomerFilter={false}
         />
 

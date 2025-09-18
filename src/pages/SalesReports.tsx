@@ -124,7 +124,9 @@ const SalesReports = () => {
 
         {/* Sales Report Filters */}
         <ReportFilters 
-          onFiltersChange={(filters) => console.log("Sales filters:", filters)}
+          onFiltersChange={(filters) => {
+            // Apply sales report filters
+          }}
           showVendorFilter={false}
           showTransactionType={false}
         />
