@@ -55,6 +55,45 @@ export const CompanyProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, []);
 
+  // Cross-tab synchronization - listen for storage changes from other tabs
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'selectedBusiness' && e.newValue) {
+        try {
+          const newBusiness = JSON.parse(e.newValue);
+          setSelectedBusiness(newBusiness);
+        } catch (error) {
+          console.error('Error parsing selectedBusiness from storage event:', error);
+        }
+      }
+      
+      if (e.key === 'selectedClient' && e.newValue) {
+        try {
+          const newClient = JSON.parse(e.newValue);
+          setSelectedClient(newClient);
+        } catch (error) {
+          console.error('Error parsing selectedClient from storage event:', error);
+        }
+      }
+      
+      // Handle clearing of selections from other tabs
+      if (e.key === 'selectedBusiness' && e.newValue === null) {
+        setSelectedBusiness(null);
+      }
+      
+      if (e.key === 'selectedClient' && e.newValue === null) {
+        setSelectedClient(null);
+      }
+    };
+
+    // Listen for storage changes from other tabs
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
   // Clear selections when user signs out
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
