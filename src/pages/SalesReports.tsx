@@ -1,6 +1,7 @@
 import MainLayout from "@/components/Layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import ReportFilters from "@/components/ReportFilters";
 import { 
   TrendingUp,
   Users,
@@ -112,6 +113,13 @@ const SalesReports = () => {
   return (
     <MainLayout title="Sales Reports" headerActions={headerActions}>
       <div className="space-y-6">
+        {/* Sales Report Filters */}
+        <ReportFilters 
+          onFiltersChange={(filters) => console.log('Sales filters:', filters)}
+          showVendorFilter={false}
+          showTransactionType={false}
+        />
+
         {/* Sales Metrics */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {salesMetrics.map((metric) => (

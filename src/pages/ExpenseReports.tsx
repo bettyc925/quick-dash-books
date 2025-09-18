@@ -1,6 +1,7 @@
 import MainLayout from "@/components/Layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import ReportFilters from "@/components/ReportFilters";
 import { 
   TrendingDown,
   Users,
@@ -121,6 +122,12 @@ const ExpenseReports = () => {
   return (
     <MainLayout title="Expense Reports" headerActions={headerActions}>
       <div className="space-y-6">
+        {/* Expense Report Filters */}
+        <ReportFilters 
+          onFiltersChange={(filters) => console.log('Expense filters:', filters)}
+          showCustomerFilter={false}
+        />
+
         {/* Expense Metrics */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {expenseMetrics.map((metric) => (

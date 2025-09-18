@@ -2,6 +2,7 @@ import MainLayout from "@/components/Layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import ReportFilters from "@/components/ReportFilters";
 import { 
   Plus,
   Settings,
@@ -132,6 +133,11 @@ const CustomReports = () => {
   return (
     <MainLayout title="Custom Reports" headerActions={headerActions}>
       <div className="space-y-6">
+        {/* Custom Report Filters */}
+        <ReportFilters 
+          onFiltersChange={(filters) => console.log('Custom report filters:', filters)}
+        />
+
         {/* Report Statistics */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <Card className="shadow-qb-md hover:shadow-qb-lg transition-shadow">

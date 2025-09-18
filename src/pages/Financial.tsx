@@ -1,6 +1,7 @@
 import MainLayout from "@/components/Layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import ReportFilters from "@/components/ReportFilters";
 import { 
   TrendingUp,
   BarChart3,
@@ -119,6 +120,14 @@ const Financial = () => {
   return (
     <MainLayout title="Financial Reports" headerActions={headerActions}>
       <div className="space-y-6">
+        {/* Financial Report Filters */}
+        <ReportFilters 
+          onFiltersChange={(filters) => console.log('Financial filters:', filters)}
+          showCustomerFilter={false}
+          showVendorFilter={false}
+          showTransactionType={false}
+        />
+
         {/* Quick Financial Metrics */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {quickMetrics.map((metric) => (

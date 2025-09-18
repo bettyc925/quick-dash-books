@@ -1,6 +1,7 @@
 import MainLayout from "@/components/Layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import ReportFilters from "@/components/ReportFilters";
 import { 
   FileText,
   TrendingUp,
@@ -109,6 +110,11 @@ const Reports = () => {
       subNavigation={reportsSubNav}
     >
       <div className="space-y-6">
+        {/* Report Filters */}
+        <ReportFilters 
+          onFiltersChange={(filters) => console.log('Filters changed:', filters)}
+        />
+
         {/* Quick Report Summary */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {quickReports.map((report) => {
