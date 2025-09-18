@@ -9,6 +9,10 @@ import Sales from "./pages/Sales";
 import Expenses from "./pages/Expenses";
 import Banking from "./pages/Banking";
 import Reports from "./pages/Reports";
+import Accountant from "./pages/Accountant";
+import Payroll from "./pages/Payroll";
+import Taxes from "./pages/Taxes";
+import Customers from "./pages/Customers";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 
@@ -48,8 +52,12 @@ const AppRoutes = () => {
       <Route path="/auth" element={user ? <Navigate to="/" replace /> : <Auth />} />
       <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/sales" element={<ProtectedRoute><Sales /></ProtectedRoute>} />
+      <Route path="/sales/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
       <Route path="/expenses" element={<ProtectedRoute><Expenses /></ProtectedRoute>} />
       <Route path="/banking" element={<ProtectedRoute><Banking /></ProtectedRoute>} />
+      <Route path="/accountant" element={<ProtectedRoute><Accountant /></ProtectedRoute>} />
+      <Route path="/payroll" element={<ProtectedRoute><Payroll /></ProtectedRoute>} />
+      <Route path="/taxes" element={<ProtectedRoute><Taxes /></ProtectedRoute>} />
       <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />

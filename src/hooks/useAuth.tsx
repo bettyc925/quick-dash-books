@@ -14,9 +14,11 @@ interface AuthContextType {
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
-  signUp: (email: string, password: string, companyName: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, companyName: string, phone?: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error: any }>;
+  verifyMFA: (phone: string) => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -79,7 +81,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, companyName: string) => {
+  const signUp = async (email: string, password: string, companyName: string, phone?: string) => {
     const redirectUrl = `${window.location.origin}/`;
     
     const { error } = await supabase.auth.signUp({
@@ -89,6 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         emailRedirectTo: redirectUrl,
         data: {
           company_name: companyName,
+          phone: phone || '',
         },
       },
     });
@@ -107,6 +110,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await supabase.auth.signOut();
   };
 
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth`,
+    });
+    return { error };
+  };
+
+  const verifyMFA = async (phone: string) => {
+    // This is a simplified MFA implementation
+    // In a real app, you'd integrate with a service like Twilio
+    try {
+      // For demo purposes, we'll just simulate sending an SMS
+      console.log(`MFA verification code sent to ${phone}`);
+      return { error: null };
+    } catch (error) {
+      return { error };
+    }
+  };
+
   const value = {
     user,
     session,
@@ -115,6 +137,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signUp,
     signIn,
     signOut,
+    resetPassword,
+    verifyMFA,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

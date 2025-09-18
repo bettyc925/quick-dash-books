@@ -10,13 +10,27 @@ import { useToast } from '@/hooks/use-toast';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('login');
+  
+  // Login state
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
+  
+  // Signup state
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
   const [companyName, setCompanyName] = useState('');
+  const [phone, setPhone] = useState('');
   
-  const { signIn, signUp, user } = useAuth();
+  // Reset password state
+  const [resetEmail, setResetEmail] = useState('');
+  
+  // MFA state
+  const [showMFA, setShowMFA] = useState(false);
+  const [mfaPhone, setMfaPhone] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  
+  const { signIn, signUp, user, resetPassword, verifyMFA } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -52,7 +66,7 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const { error } = await signUp(signupEmail, signupPassword, companyName);
+    const { error } = await signUp(signupEmail, signupPassword, companyName, phone);
 
     if (error) {
       toast({
@@ -65,10 +79,120 @@ const Auth = () => {
         title: "Account Created!",
         description: "Please check your email to verify your account.",
       });
+      // Show MFA setup if phone number provided
+      if (phone) {
+        setMfaPhone(phone);
+        setShowMFA(true);
+      }
     }
 
     setIsLoading(false);
   };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    const { error } = await resetPassword(resetEmail);
+
+    if (error) {
+      toast({
+        title: "Reset Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Reset Email Sent!",
+        description: "Please check your email for password reset instructions.",
+      });
+      setResetEmail('');
+      setActiveTab('login');
+    }
+
+    setIsLoading(false);
+  };
+
+  const handleMFAVerification = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    const { error } = await verifyMFA(mfaPhone);
+
+    if (error) {
+      toast({
+        title: "MFA Setup Failed",
+        description: error.message || "Failed to set up MFA",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "MFA Setup Complete!",
+        description: "Your account has been secured with multi-factor authentication.",
+      });
+      setShowMFA(false);
+    }
+
+    setIsLoading(false);
+  };
+
+  if (showMFA) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-qb-green">Setup MFA</CardTitle>
+            <CardDescription>
+              Secure your account with multi-factor authentication
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleMFAVerification} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="mfa-phone">Phone Number</Label>
+                <Input
+                  id="mfa-phone"
+                  type="tel"
+                  placeholder="Enter your phone number"
+                  value={mfaPhone}
+                  onChange={(e) => setMfaPhone(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="verification-code">Verification Code</Label>
+                <Input
+                  id="verification-code"
+                  type="text"
+                  placeholder="Enter verification code"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  A verification code has been sent to your phone
+                </p>
+              </div>
+              <Button 
+                type="submit" 
+                className="w-full bg-qb-green hover:bg-qb-green-dark text-primary-foreground"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Verifying...' : 'Verify & Complete Setup'}
+              </Button>
+              <Button 
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={() => setShowMFA(false)}
+              >
+                Skip for now
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
@@ -80,10 +204,11 @@ const Auth = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsTrigger value="reset">Reset</TabsTrigger>
             </TabsList>
             
             <TabsContent value="login" className="space-y-4">
@@ -145,6 +270,19 @@ const Auth = () => {
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number (Optional - for MFA)</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="Enter your phone number"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Phone number will be used for multi-factor authentication
+                  </p>
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="signup-password">Password</Label>
                   <Input
                     id="signup-password"
@@ -161,6 +299,29 @@ const Auth = () => {
                   disabled={isLoading}
                 >
                   {isLoading ? 'Creating Account...' : 'Sign Up'}
+                </Button>
+              </form>
+            </TabsContent>
+            
+            <TabsContent value="reset" className="space-y-4">
+              <form onSubmit={handleResetPassword} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="reset-email">Email</Label>
+                  <Input
+                    id="reset-email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <Button 
+                  type="submit" 
+                  className="w-full bg-qb-green hover:bg-qb-green-dark text-primary-foreground"
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Sending Reset Email...' : 'Reset Password'}
                 </Button>
               </form>
             </TabsContent>

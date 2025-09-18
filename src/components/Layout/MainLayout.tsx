@@ -20,12 +20,24 @@ import { useAuth } from "@/hooks/useAuth";
 import { Badge } from "@/components/ui/badge";
 
 const navigationItems = [
-  { name: "Dashboard", href: "/", icon: Home },
-  { name: "Sales", href: "/sales", icon: Receipt },
-  { name: "Expenses", href: "/expenses", icon: CreditCard },
-  { name: "Banking", href: "/banking", icon: Banknote },
-  { name: "Reports", href: "/reports", icon: FileText },
-  { name: "Customers", href: "/customers", icon: Users },
+  { name: "Dashboard", href: "/", icon: Home, roles: ['admin', 'user', 'manager'] },
+  { 
+    name: "Sales", 
+    href: "/sales", 
+    icon: Receipt, 
+    roles: ['admin', 'user', 'manager'],
+    subItems: [
+      { name: "Overview", href: "/sales", roles: ['admin', 'user', 'manager'] },
+      { name: "Customers", href: "/sales/customers", roles: ['admin', 'user', 'manager'] },
+      { name: "Invoices", href: "/sales/invoices", roles: ['admin', 'user', 'manager'] }
+    ]
+  },
+  { name: "Expenses", href: "/expenses", icon: CreditCard, roles: ['admin', 'user', 'manager'] },
+  { name: "Banking", href: "/banking", icon: Banknote, roles: ['admin', 'manager'] },
+  { name: "Accountant", href: "/accountant", icon: FileText, roles: ['admin'] },
+  { name: "Payroll", href: "/payroll", icon: Users, roles: ['admin', 'manager'] },
+  { name: "Taxes", href: "/taxes", icon: Receipt, roles: ['admin'] },
+  { name: "Reports", href: "/reports", icon: FileText, roles: ['admin', 'manager'] },
 ];
 
 interface MainLayoutProps {
@@ -85,29 +97,57 @@ export default function MainLayout({
 
           {/* Navigation */}
           <nav className="flex-1 space-y-1 p-4">
-            {navigationItems.map((item) => {
-              const Icon = item.icon;
-              const active = isActive(item.href);
-              
-              return (
-                <NavLink
-                  key={item.name}
-                  to={item.href}
-                  className={cn(
-                    "group flex items-center rounded-md px-2 py-2 text-sm font-medium transition-colors",
-                    active
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                  )}
-                >
-                  <Icon className={cn(
-                    "h-5 w-5 flex-shrink-0",
-                    sidebarOpen ? "mr-3" : "mx-auto"
-                  )} />
-                  {sidebarOpen && item.name}
-                </NavLink>
-              );
-            })}
+            {navigationItems
+              .filter(item => !profile || item.roles.includes(profile.role))
+              .map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.href);
+                const hasAccess = !profile || item.roles.includes(profile.role);
+                
+                if (!hasAccess) return null;
+                
+                return (
+                  <div key={item.name}>
+                    <NavLink
+                      to={item.href}
+                      className={cn(
+                        "group flex items-center rounded-md px-2 py-2 text-sm font-medium transition-colors",
+                        active
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                      )}
+                    >
+                      <Icon className={cn(
+                        "h-5 w-5 flex-shrink-0",
+                        sidebarOpen ? "mr-3" : "mx-auto"
+                      )} />
+                      {sidebarOpen && item.name}
+                    </NavLink>
+                    
+                    {/* Sub-navigation for Sales */}
+                    {item.subItems && sidebarOpen && active && (
+                      <div className="ml-6 mt-1 space-y-1">
+                        {item.subItems
+                          .filter(subItem => !profile || subItem.roles.includes(profile.role))
+                          .map((subItem) => (
+                            <NavLink
+                              key={subItem.name}
+                              to={subItem.href}
+                              className={cn(
+                                "block rounded-md px-2 py-1 text-sm transition-colors",
+                                location.pathname === subItem.href
+                                  ? "bg-accent text-foreground font-medium"
+                                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                              )}
+                            >
+                              {subItem.name}
+                            </NavLink>
+                          ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
           </nav>
 
           {/* User Profile & Settings */}
