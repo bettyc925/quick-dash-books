@@ -29,6 +29,9 @@ import CustomReports from "./pages/CustomReports";
 import TestUsers from "./pages/TestUsers";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import ProfileSetup from "./pages/ProfileSetup";
+import CreateClient from "./pages/CreateClient";
+import ClientList from "./pages/ClientList";
 
 const queryClient = new QueryClient();
 
@@ -49,7 +52,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const AppRoutes = () => {
-  const { user, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
   
   if (loading) {
     return (
@@ -61,10 +64,23 @@ const AppRoutes = () => {
     );
   }
   
+  // Redirect authenticated users who haven't completed profile setup
+  const shouldRedirectToProfileSetup = user && profile && !profile.setup_completed && 
+    !window.location.pathname.includes('/profile-setup') && 
+    !window.location.pathname.includes('/auth');
+  
+  if (shouldRedirectToProfileSetup) {
+    return <Navigate to="/profile-setup" replace />;
+  }
+  
   return (
     <Routes>
       <Route path="/auth" element={user ? <Navigate to="/" replace /> : <Auth />} />
+      <Route path="/profile-setup" element={<ProtectedRoute><ProfileSetup /></ProtectedRoute>} />
+      <Route path="/create-client" element={<ProtectedRoute><CreateClient /></ProtectedRoute>} />
+      <Route path="/client-list" element={<ProtectedRoute><ClientList /></ProtectedRoute>} />
       <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/sales" element={<ProtectedRoute><Sales /></ProtectedRoute>} />
       <Route path="/sales/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
       <Route path="/sales/invoices" element={<ProtectedRoute><Invoices /></ProtectedRoute>} />

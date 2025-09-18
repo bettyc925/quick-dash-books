@@ -22,6 +22,9 @@ const Auth = () => {
   const [signupPassword, setSignupPassword] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [phone, setPhone] = useState('');
+  const [userType, setUserType] = useState<'bookkeeper' | 'client'>('bookkeeper');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   
   // Reset password state
   const [resetEmail, setResetEmail] = useState('');
@@ -67,7 +70,13 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const { error } = await signUp(signupEmail, signupPassword, companyName, phone);
+    const { error } = await signUp(signupEmail, signupPassword, {
+      companyName,
+      userType,
+      firstName,
+      lastName,
+      phone
+    });
 
     if (error) {
       toast({
@@ -80,11 +89,6 @@ const Auth = () => {
         title: "Account Created!",
         description: "Please check your email to verify your account.",
       });
-      // Show MFA setup if phone number provided
-      if (phone) {
-        setMfaPhone(phone);
-        setShowMFA(true);
-      }
     }
 
     setIsLoading(false);
@@ -248,6 +252,43 @@ const Auth = () => {
             <TabsContent value="signup" className="space-y-4">
               <form onSubmit={handleSignup} className="space-y-4">
                 <div className="space-y-2">
+                  <Label htmlFor="user-type">Account Type</Label>
+                  <select
+                    id="user-type"
+                    value={userType}
+                    onChange={(e) => setUserType(e.target.value as 'bookkeeper' | 'client')}
+                    className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    required
+                  >
+                    <option value="bookkeeper">Bookkeeper</option>
+                    <option value="client">Client</option>
+                  </select>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="first-name">First Name</Label>
+                    <Input
+                      id="first-name"
+                      type="text"
+                      placeholder="First name"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="last-name">Last Name</Label>
+                    <Input
+                      id="last-name"
+                      type="text"
+                      placeholder="Last name"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
                   <Input
                     id="signup-email"
@@ -259,18 +300,20 @@ const Auth = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="company-name">Company Name</Label>
+                  <Label htmlFor="company-name">
+                    {userType === 'bookkeeper' ? 'Business Name' : 'Company Name'}
+                  </Label>
                   <Input
                     id="company-name"
                     type="text"
-                    placeholder="Enter your company name"
+                    placeholder={userType === 'bookkeeper' ? 'Your bookkeeping business name' : 'Your company name'}
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number (Optional - for MFA)</Label>
+                  <Label htmlFor="phone">Phone Number (Optional)</Label>
                   <Input
                     id="phone"
                     type="tel"
@@ -278,9 +321,6 @@ const Auth = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                   />
-                  <p className="text-xs text-muted-foreground">
-                    Phone number will be used for multi-factor authentication
-                  </p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-password">Password</Label>

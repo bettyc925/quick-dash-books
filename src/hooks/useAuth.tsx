@@ -6,7 +6,12 @@ interface Profile {
   id: string;
   user_id: string;
   company_name: string;
-  role: 'admin' | 'user' | 'manager';
+  role: 'admin' | 'user' | 'manager' | 'bookkeeper_basic' | 'bookkeeper_pro' | 'bookkeeper_admin' | 'client';
+  setup_completed: boolean;
+  first_name: string | null;
+  last_name: string | null;
+  phone: string | null;
+  business_name: string | null;
 }
 
 interface AuthContextType {
@@ -14,7 +19,13 @@ interface AuthContextType {
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
-  signUp: (email: string, password: string, companyName: string, phone?: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, userData: {
+    companyName: string;
+    userType: 'bookkeeper' | 'client';
+    firstName: string;
+    lastName: string;
+    phone?: string;
+  }) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: any }>;
@@ -81,8 +92,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, companyName: string, phone?: string) => {
-    const redirectUrl = `${window.location.origin}/`;
+  const signUp = async (email: string, password: string, userData: {
+    companyName: string;
+    userType: 'bookkeeper' | 'client';
+    firstName: string;
+    lastName: string;
+    phone?: string;
+  }) => {
+    const redirectUrl = `${window.location.origin}/profile-setup`;
     
     const { error } = await supabase.auth.signUp({
       email,
@@ -90,8 +107,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       options: {
         emailRedirectTo: redirectUrl,
         data: {
-          company_name: companyName,
-          phone: phone || '',
+          company_name: userData.companyName,
+          user_type: userData.userType,
+          first_name: userData.firstName,
+          last_name: userData.lastName,
+          phone: userData.phone || '',
         },
       },
     });
