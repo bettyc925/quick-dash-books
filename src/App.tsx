@@ -40,7 +40,7 @@ const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
-  const { selectedCompany } = useCompany();
+  const { selectedBusiness, selectedClient } = useCompany();
   
   if (loading) {
     return (
@@ -56,12 +56,11 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <Navigate to="/auth" replace />;
   }
 
-  // If user is authenticated but hasn't selected a company, redirect to company selection
-  // unless they're on company-related pages
+  // If user is authenticated but hasn't selected a business, redirect to company selection
   const currentPath = window.location.pathname;
   const companyRelatedPaths = ['/company-selection', '/create-client', '/profile-setup'];
   
-  if (!selectedCompany && !companyRelatedPaths.some(path => currentPath.includes(path))) {
+  if (!selectedBusiness && !companyRelatedPaths.some(path => currentPath.includes(path))) {
     return <Navigate to="/company-selection" replace />;
   }
   
@@ -70,7 +69,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 const AppRoutes = () => {
   const { user, profile, loading } = useAuth();
-  const { selectedCompany } = useCompany();
+  const { selectedBusiness, selectedClient } = useCompany();
   
   if (loading) {
     return (
@@ -95,8 +94,8 @@ const AppRoutes = () => {
   const getDefaultRoute = () => {
     if (!user || !profile) return '/auth';
     
-    // If no company is selected, go to company selection
-    if (!selectedCompany) {
+    // If no business is selected, go to company selection
+    if (!selectedBusiness) {
       return '/company-selection';
     }
     

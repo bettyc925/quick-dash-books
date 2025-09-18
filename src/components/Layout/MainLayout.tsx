@@ -20,6 +20,8 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { useCompany } from "@/contexts/CompanyContext";
 import { Badge } from "@/components/ui/badge";
+import BusinessSwitcher from "@/components/BusinessSwitcher";
+import ClientSwitcher from "@/components/ClientSwitcher";
 
 const navigationItems = [
   { name: "Dashboard", href: "/", icon: Home, roles: ['admin', 'user', 'manager'] },
@@ -63,7 +65,7 @@ export default function MainLayout({
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const location = useLocation();
   const { profile, signOut } = useAuth();
-  const { selectedCompany, clearSelectedCompany } = useCompany();
+  const { selectedBusiness, selectedClient, clearSelections } = useCompany();
 
   const isActive = (href: string) => {
     if (href === "/") return location.pathname === "/";
@@ -82,21 +84,31 @@ export default function MainLayout({
         sidebarOpen ? "w-64" : "w-16"
       )}>
         <div className="flex h-full flex-col">
-          {/* Logo */}
-          <div className="flex h-16 items-center justify-between px-4 border-b bg-gradient-qb">
-            {sidebarOpen && (
-              <h1 className="text-xl font-bold text-primary-foreground">
-                Betty's Books
-              </h1>
+          {/* Business Switcher */}
+          <div className="flex h-16 items-center justify-between px-4 border-b">
+            {sidebarOpen ? (
+              <BusinessSwitcher />
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarOpen(true)}
+                className="text-primary-foreground hover:bg-qb-blue-light"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
             )}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="text-primary-foreground hover:bg-qb-blue-light"
-            >
-              {sidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-            </Button>
+            
+            {sidebarOpen && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarOpen(false)}
+                className="text-primary-foreground hover:bg-qb-blue-light"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
           </div>
 
           {/* Navigation */}
@@ -218,20 +230,7 @@ export default function MainLayout({
         <header className="bg-card border-b shadow-qb-sm">
           <div className="flex h-16 items-center justify-between px-6">
             <div className="flex items-center space-x-4">
-              {selectedCompany && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    clearSelectedCompany();
-                    window.location.href = '/company-selection';
-                  }}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  {selectedCompany.name}
-                </Button>
-              )}
+              <ClientSwitcher />
               <h2 className="text-2xl font-semibold text-foreground">{title}</h2>
             </div>
             {headerActions && (

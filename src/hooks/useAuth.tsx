@@ -127,8 +127,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
-    // Clear selected company when signing out
-    localStorage.removeItem('selectedCompany');
+    // Clear selected business and client when signing out
+    localStorage.removeItem('selectedBusiness');
+    localStorage.removeItem('selectedClient');
     await supabase.auth.signOut();
   };
 

@@ -43,7 +43,7 @@ const mockClients = [
 
 const Clients = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const { selectedCompany } = useCompany();
+  const { selectedBusiness, selectedClient } = useCompany();
 
   const filteredClients = mockClients.filter(client => 
     client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -62,7 +62,7 @@ const Clients = () => {
           <div>
             <h1 className="text-3xl font-bold text-qb-blue">Clients</h1>
             <p className="text-muted-foreground">
-              Manage your client relationships for {selectedCompany?.name}
+              Manage your client relationships for {selectedClient?.name || selectedBusiness?.name}
             </p>
           </div>
           <Button className="bg-qb-blue hover:bg-qb-blue-dark">

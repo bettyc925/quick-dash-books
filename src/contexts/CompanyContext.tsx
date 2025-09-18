@@ -12,36 +12,56 @@ interface Company {
   user_role: string;
 }
 
+interface Business {
+  id: string;
+  name: string;
+  user_role: string;
+  clients?: Company[];
+}
+
 interface CompanyContextType {
-  selectedCompany: Company | null;
-  setSelectedCompany: (company: Company | null) => void;
-  clearSelectedCompany: () => void;
+  selectedBusiness: Business | null;
+  selectedClient: Company | null;
+  setSelectedBusiness: (business: Business | null) => void;
+  setSelectedClient: (client: Company | null) => void;
+  clearSelections: () => void;
 }
 
 const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
 
 export const CompanyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
+  const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
+  const [selectedClient, setSelectedClient] = useState<Company | null>(null);
 
-  // Load selected company from localStorage on mount
+  // Load selections from localStorage on mount
   useEffect(() => {
-    const stored = localStorage.getItem('selectedCompany');
-    if (stored) {
+    const storedBusiness = localStorage.getItem('selectedBusiness');
+    const storedClient = localStorage.getItem('selectedClient');
+    
+    if (storedBusiness) {
       try {
-        setSelectedCompany(JSON.parse(stored));
+        setSelectedBusiness(JSON.parse(storedBusiness));
       } catch (error) {
-        // Invalid stored data, clear it
-        localStorage.removeItem('selectedCompany');
+        localStorage.removeItem('selectedBusiness');
+      }
+    }
+    
+    if (storedClient) {
+      try {
+        setSelectedClient(JSON.parse(storedClient));
+      } catch (error) {
+        localStorage.removeItem('selectedClient');
       }
     }
   }, []);
 
-  // Clear selected company when user signs out
+  // Clear selections when user signs out
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (event === 'SIGNED_OUT') {
-          setSelectedCompany(null);
+          setSelectedBusiness(null);
+          setSelectedClient(null);
         }
       }
     );
@@ -49,23 +69,34 @@ export const CompanyProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return () => subscription.unsubscribe();
   }, []);
 
-  // Save selected company to localStorage when it changes
+  // Save selections to localStorage when they change
   useEffect(() => {
-    if (selectedCompany) {
-      localStorage.setItem('selectedCompany', JSON.stringify(selectedCompany));
+    if (selectedBusiness) {
+      localStorage.setItem('selectedBusiness', JSON.stringify(selectedBusiness));
     } else {
-      localStorage.removeItem('selectedCompany');
+      localStorage.removeItem('selectedBusiness');
     }
-  }, [selectedCompany]);
+  }, [selectedBusiness]);
 
-  const clearSelectedCompany = () => {
-    setSelectedCompany(null);
+  useEffect(() => {
+    if (selectedClient) {
+      localStorage.setItem('selectedClient', JSON.stringify(selectedClient));
+    } else {
+      localStorage.removeItem('selectedClient');
+    }
+  }, [selectedClient]);
+
+  const clearSelections = () => {
+    setSelectedBusiness(null);
+    setSelectedClient(null);
   };
 
   const value = {
-    selectedCompany,
-    setSelectedCompany,
-    clearSelectedCompany,
+    selectedBusiness,
+    selectedClient,
+    setSelectedBusiness,
+    setSelectedClient,
+    clearSelections,
   };
 
   return <CompanyContext.Provider value={value}>{children}</CompanyContext.Provider>;

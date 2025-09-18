@@ -25,7 +25,7 @@ const CompanySelection = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
   
   const { user, profile } = useAuth();
-  const { setSelectedCompany } = useCompany();
+  const { setSelectedBusiness } = useCompany();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -82,7 +82,12 @@ const CompanySelection = () => {
   };
 
   const handleSelectCompany = (company: Company) => {
-    setSelectedCompany(company);
+    const business = {
+      id: company.id,
+      name: company.name,
+      user_role: company.user_role,
+    };
+    setSelectedBusiness(business);
     navigate('/dashboard');
   };
 
