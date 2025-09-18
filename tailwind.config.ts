@@ -62,6 +62,7 @@ export default {
           "green-light": "hsl(var(--qb-green-light))",
           "green-dark": "hsl(var(--qb-green-dark))",
           blue: "hsl(var(--qb-blue))",
+          orange: "hsl(var(--qb-orange))",
           "gray-50": "hsl(var(--qb-gray-50))",
           "gray-100": "hsl(var(--qb-gray-100))",
           "gray-200": "hsl(var(--qb-gray-200))",
