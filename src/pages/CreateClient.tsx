@@ -111,7 +111,7 @@ const CreateClient = () => {
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-2xl">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-qb-green">Add Your First Client</CardTitle>
+          <CardTitle className="text-2xl font-bold text-qb-blue">Add Your First Client</CardTitle>
           <CardDescription>
             Create a client company to start managing their books
           </CardDescription>
@@ -239,7 +239,7 @@ const CreateClient = () => {
               </Button>
               <Button 
                 type="submit" 
-                className="flex-1 bg-qb-green hover:bg-qb-green-dark text-primary-foreground"
+                className="flex-1 bg-qb-blue hover:bg-qb-blue-dark text-primary-foreground"
                 disabled={isLoading}
               >
                 {isLoading ? 'Creating...' : 'Create Client'}

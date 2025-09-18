@@ -92,7 +92,7 @@ const ClientList = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-qb-green mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-qb-blue mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading your clients...</p>
         </div>
       </div>
@@ -104,13 +104,13 @@ const ClientList = () => {
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-qb-green">Your Clients</h1>
+            <h1 className="text-3xl font-bold text-qb-blue">Your Clients</h1>
             <p className="text-muted-foreground mt-2">
               Select a client to manage their books
             </p>
           </div>
           <Link to="/create-client">
-            <Button className="bg-qb-green hover:bg-qb-green-dark">
+            <Button className="bg-qb-blue hover:bg-qb-blue-dark">
               <Plus className="w-4 h-4 mr-2" />
               Add Client
             </Button>
@@ -125,7 +125,7 @@ const ClientList = () => {
               Start by adding your first client company
             </p>
             <Link to="/create-client">
-              <Button className="bg-qb-green hover:bg-qb-green-dark">
+              <Button className="bg-qb-blue hover:bg-qb-blue-dark">
                 <Plus className="w-4 h-4 mr-2" />
                 Add Your First Client
               </Button>
@@ -141,7 +141,7 @@ const ClientList = () => {
               >
                 <CardHeader>
                   <div className="flex items-start justify-between">
-                    <CardTitle className="text-lg font-semibold text-qb-green">
+                    <CardTitle className="text-lg font-semibold text-qb-blue">
                       {company.name}
                     </CardTitle>
                     <Badge variant="secondary">

@@ -58,10 +58,10 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
         qb: {
-          green: "hsl(var(--qb-green))",
-          "green-light": "hsl(var(--qb-green-light))",
-          "green-dark": "hsl(var(--qb-green-dark))",
           blue: "hsl(var(--qb-blue))",
+          "blue-light": "hsl(var(--qb-blue-light))",
+          "blue-dark": "hsl(var(--qb-blue-dark))",
+          accent: "hsl(var(--qb-accent))",
           orange: "hsl(var(--qb-orange))",
           "gray-50": "hsl(var(--qb-gray-50))",
           "gray-100": "hsl(var(--qb-gray-100))",

@@ -120,7 +120,7 @@ const ProfileSetup = () => {
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-qb-green">Complete Your Profile</CardTitle>
+          <CardTitle className="text-2xl font-bold text-qb-blue">Complete Your Profile</CardTitle>
           <CardDescription>
             {isBookkeeper 
               ? "Set up your bookkeeping business profile"
@@ -182,7 +182,7 @@ const ProfileSetup = () => {
             
             <Button 
               type="submit" 
-              className="w-full bg-qb-green hover:bg-qb-green-dark text-primary-foreground"
+              className="w-full bg-qb-blue hover:bg-qb-blue-dark text-primary-foreground"
               disabled={isLoading}
             >
               {isLoading ? 'Saving...' : 'Complete Setup'}

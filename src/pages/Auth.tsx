@@ -146,7 +146,7 @@ const Auth = () => {
       <div className="min-h-screen flex items-center justify-center bg-background px-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-qb-green">Setup MFA</CardTitle>
+            <CardTitle className="text-2xl font-bold text-qb-blue">Setup MFA</CardTitle>
             <CardDescription>
               Secure your account with multi-factor authentication
             </CardDescription>
@@ -179,7 +179,7 @@ const Auth = () => {
               </div>
               <Button 
                 type="submit" 
-                className="w-full bg-qb-green hover:bg-qb-green-dark text-primary-foreground"
+                className="w-full bg-qb-blue hover:bg-qb-blue-dark text-primary-foreground"
                 disabled={isLoading}
               >
                 {isLoading ? 'Verifying...' : 'Verify & Complete Setup'}
@@ -203,7 +203,7 @@ const Auth = () => {
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-qb-green">BB App</CardTitle>
+          <CardTitle className="text-2xl font-bold text-qb-blue">BB App</CardTitle>
           <CardDescription>
             Access your business dashboard
           </CardDescription>
@@ -241,7 +241,7 @@ const Auth = () => {
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full bg-qb-green hover:bg-qb-green-dark text-primary-foreground"
+                  className="w-full bg-qb-blue hover:bg-qb-blue-dark text-primary-foreground"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Logging in...' : 'Login'}
@@ -334,7 +334,7 @@ const Auth = () => {
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full bg-qb-green hover:bg-qb-green-dark text-primary-foreground"
+                  className="w-full bg-qb-blue hover:bg-qb-blue-dark text-primary-foreground"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Creating Account...' : 'Sign Up'}
@@ -357,7 +357,7 @@ const Auth = () => {
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full bg-qb-green hover:bg-qb-green-dark text-primary-foreground"
+                  className="w-full bg-qb-blue hover:bg-qb-blue-dark text-primary-foreground"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Sending Reset Email...' : 'Reset Password'}

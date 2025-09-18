@@ -47,7 +47,7 @@ const Dashboard = () => {
   const quickActions = [
     { title: "Create Invoice", icon: FileText, color: "bg-primary" },
     { title: "Add Expense", icon: CreditCard, color: "bg-qb-blue" },
-    { title: "Record Payment", icon: DollarSign, color: "bg-qb-green" },
+    { title: "Record Payment", icon: DollarSign, color: "bg-qb-blue" },
     { title: "New Customer", icon: Plus, color: "bg-accent" },
   ];
 
@@ -90,7 +90,7 @@ const Dashboard = () => {
                 <CardContent>
                   <div className="text-2xl font-bold text-foreground">{stat.value}</div>
                   <div className={`flex items-center text-xs ${
-                    stat.trend === "up" ? "text-qb-green" : "text-destructive"
+                    stat.trend === "up" ? "text-qb-blue" : "text-destructive"
                   }`}>
                     <TrendIcon className="mr-1 h-3 w-3" />
                     {stat.change}
@@ -148,7 +148,7 @@ const Dashboard = () => {
                       <p className="text-xs text-muted-foreground">{transaction.date}</p>
                     </div>
                     <div className={`text-sm font-medium ${
-                      transaction.type === "income" ? "text-qb-green" : "text-destructive"
+                      transaction.type === "income" ? "text-qb-blue" : "text-destructive"
                     }`}>
                       {transaction.amount}
                     </div>

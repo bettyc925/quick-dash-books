@@ -89,7 +89,7 @@ export default function MainLayout({
               variant="ghost"
               size="sm"
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="text-primary-foreground hover:bg-qb-green-light"
+              className="text-primary-foreground hover:bg-qb-blue-light"
             >
               {sidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </Button>
