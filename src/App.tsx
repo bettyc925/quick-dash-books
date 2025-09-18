@@ -74,14 +74,27 @@ const AppRoutes = () => {
   if (shouldRedirectToProfileSetup) {
     return <Navigate to="/profile-setup" replace />;
   }
+
+  // Smart routing based on user role after authentication
+  const getDefaultRoute = () => {
+    if (!user || !profile) return '/auth';
+    
+    // Bookkeepers should see client list to select which company to manage
+    if (profile.role.startsWith('bookkeeper')) {
+      return '/client-list';
+    }
+    
+    // Clients should see their company dashboard directly
+    return '/dashboard';
+  };
   
   return (
     <Routes>
-      <Route path="/auth" element={user ? <Navigate to="/" replace /> : <Auth />} />
+      <Route path="/auth" element={user ? <Navigate to={getDefaultRoute()} replace /> : <Auth />} />
       <Route path="/profile-setup" element={<ProtectedRoute><ProfileSetup /></ProtectedRoute>} />
       <Route path="/create-client" element={<ProtectedRoute><CreateClient /></ProtectedRoute>} />
       <Route path="/client-list" element={<ProtectedRoute><ClientList /></ProtectedRoute>} />
-      <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+      <Route path="/" element={<ProtectedRoute><Navigate to={getDefaultRoute()} replace /></ProtectedRoute>} />
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/sales" element={<ProtectedRoute><Sales /></ProtectedRoute>} />
       <Route path="/sales/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
