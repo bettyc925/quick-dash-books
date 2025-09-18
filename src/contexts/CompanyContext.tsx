@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Company {
   id: string;
@@ -33,6 +34,19 @@ export const CompanyProvider: React.FC<{ children: React.ReactNode }> = ({ child
         localStorage.removeItem('selectedCompany');
       }
     }
+  }, []);
+
+  // Clear selected company when user signs out
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === 'SIGNED_OUT') {
+          setSelectedCompany(null);
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
 
   // Save selected company to localStorage when it changes
