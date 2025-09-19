@@ -13,7 +13,8 @@ import {
   ChevronRight,
   LogOut,
   User,
-  ArrowLeft
+  ArrowLeft,
+  CheckSquare
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -38,6 +39,7 @@ const navigationItems = [
   },
   { name: "Expenses", href: "/expenses", icon: CreditCard, roles: ['admin', 'user', 'manager'] },
   { name: "Banking", href: "/banking", icon: Banknote, roles: ['admin', 'manager'] },
+  { name: "Tasks", href: "/tasks", icon: CheckSquare, roles: ['admin', 'user', 'manager'] },
   { name: "Clients", href: "/clients", icon: Users, roles: ['admin', 'user', 'manager'] },
   { name: "Accountant", href: "/accountant", icon: FileText, roles: ['admin'] },
   { name: "Payroll", href: "/payroll", icon: Users, roles: ['admin', 'manager'] },
