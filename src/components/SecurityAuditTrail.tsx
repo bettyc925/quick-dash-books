@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,16 @@ import { getSecurityLogs, clearSecurityLogs, type SecurityEvent } from '@/utils/
 export default function SecurityAuditTrail() {
   const [logs, setLogs] = useState<SecurityEvent[]>([]);
   const [isVisible, setIsVisible] = useState(false);
+  const location = useLocation();
+  
+  // Don't show security logs on auth page to prevent interference
+  const shouldHide = useMemo(() => {
+    return location.pathname === '/auth';
+  }, [location.pathname]);
+  
+  if (shouldHide) {
+    return null;
+  }
 
   useEffect(() => {
     if (isVisible) {

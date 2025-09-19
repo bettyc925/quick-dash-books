@@ -42,8 +42,8 @@ const Auth = () => {
 
   useEffect(() => {
     if (user) {
-      // Force redirect to company selection if user is logged in
-      window.location.href = '/company-selection';
+      // Use React Router navigation to prevent page reload
+      navigate('/company-selection', { replace: true });
     }
   }, [user, navigate]);
 
