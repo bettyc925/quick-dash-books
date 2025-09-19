@@ -3,11 +3,13 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
 import { useCompany } from '@/contexts/CompanyContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Plus, Building2, Mail, Phone, MapPin } from 'lucide-react';
+import { Plus, Building2, Mail, Phone, MapPin, MoreVertical, Edit, Settings } from 'lucide-react';
+import CompanyEditModal from '@/components/CompanyEditModal';
 
 interface Company {
   id: string;
@@ -16,6 +18,7 @@ interface Company {
   phone?: string;
   address?: string;
   industry?: string;
+  currency?: string;
   created_at: string;
   user_role: string;
 }
@@ -23,6 +26,8 @@ interface Company {
 const CompanySelection = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [editingCompany, setEditingCompany] = useState<Company | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   
   const { user, profile } = useAuth();
   const { setSelectedBusiness } = useCompany();
@@ -55,6 +60,7 @@ const CompanySelection = () => {
             phone,
             address,
             industry,
+            currency,
             created_at
           )
         `)
@@ -91,14 +97,33 @@ const CompanySelection = () => {
     navigate('/dashboard');
   };
 
+  const handleEditCompany = (company: Company, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
+    setEditingCompany(company);
+    setIsEditModalOpen(true);
+  };
+
+  const handleFullEdit = (company: Company, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
+    navigate(`/edit-client/${company.id}`);
+  };
+
+  const handleEditSuccess = () => {
+    fetchCompanies(); // Refresh the list
+  };
+
+  const canEdit = (company: Company) => {
+    return ['admin', 'editor'].includes(company.user_role);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-qb-blue mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading your companies...</p>
-          </div>
         </div>
+      </div>
     );
   }
 
@@ -112,15 +137,18 @@ const CompanySelection = () => {
               Choose which company you'd like to work with
             </p>
           </div>
-            {profile?.role?.startsWith('bookkeeper') ? (
-              <Link to="/create-client">
-                <Button className="bg-qb-blue hover:bg-qb-blue-dark">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Client
-                </Button>
-              </Link>
-            ) : null}
+          {profile?.role?.startsWith('bookkeeper') ? (
+            <Link to="/create-client">
+              <Button className="bg-qb-blue hover:bg-qb-blue-dark">
+                <Plus className="w-4 h-4 mr-2" />
+                Add Client
+              </Button>
+            </Link>
+          ) : null}
         </div>
+        {!profile?.role?.startsWith('bookkeeper') && (
+          <p className="text-sm text-muted-foreground">You have viewer access. Ask an admin to grant bookkeeper permissions to add companies.</p>
+        )}
 
         {companies.length === 0 ? (
           <div className="text-center py-12">
@@ -143,7 +171,7 @@ const CompanySelection = () => {
             {companies.map((company) => (
               <Card
                 key={company.id}
-                className="cursor-pointer hover:shadow-lg transition-shadow"
+                className="cursor-pointer hover:shadow-lg transition-shadow relative group"
                 onClick={() => handleSelectCompany(company)}
               >
                 <CardHeader>
@@ -151,9 +179,35 @@ const CompanySelection = () => {
                     <CardTitle className="text-lg font-semibold text-qb-blue">
                       {company.name}
                     </CardTitle>
-                    <Badge variant="secondary">
-                      {company.user_role}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary">
+                        {company.user_role}
+                      </Badge>
+                      {canEdit(company) && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={(e) => handleEditCompany(company, e)}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              Quick Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={(e) => handleFullEdit(company, e)}>
+                              <Settings className="mr-2 h-4 w-4" />
+                              Full Edit
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
+                    </div>
                   </div>
                   {company.industry && (
                     <CardDescription>{company.industry}</CardDescription>
@@ -191,6 +245,16 @@ const CompanySelection = () => {
           </div>
         )}
       </div>
+
+      <CompanyEditModal
+        company={editingCompany}
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setEditingCompany(null);
+        }}
+        onSuccess={handleEditSuccess}
+      />
     </div>
   );
 };

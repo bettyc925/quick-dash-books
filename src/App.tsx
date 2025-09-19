@@ -35,6 +35,7 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import ProfileSetup from "./pages/ProfileSetup";
 import CreateClient from "./pages/CreateClient";
+import EditClient from "./pages/EditClient";
 import CompanySelection from "./pages/CompanySelection";
 import Clients from "./pages/Clients";
 
@@ -60,7 +61,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   // If user is authenticated but hasn't selected a business, redirect to company selection
   const currentPath = window.location.pathname;
-  const companyRelatedPaths = ['/company-selection', '/create-client', '/profile-setup'];
+  const companyRelatedPaths = ['/company-selection', '/create-client', '/edit-client', '/profile-setup'];
   
   if (!selectedBusiness && !companyRelatedPaths.some(path => currentPath.includes(path))) {
     return <Navigate to="/company-selection" replace />;
@@ -109,6 +110,7 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/auth" element={user ? <Navigate to={getDefaultRoute()} replace /> : <Auth />} />
       <Route path="/profile-setup" element={<ProtectedRoute><ProfileSetup /></ProtectedRoute>} />
+      <Route path="/edit-client/:companyId" element={<ProtectedRoute><EditClient /></ProtectedRoute>} />
       <Route path="/create-client" element={<ProtectedRoute><CreateClient /></ProtectedRoute>} />
       <Route path="/company-selection" element={<ProtectedRoute><CompanySelection /></ProtectedRoute>} />
       <Route path="/clients" element={<ProtectedRoute><Clients /></ProtectedRoute>} />
