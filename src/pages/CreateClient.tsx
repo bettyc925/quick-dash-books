@@ -66,7 +66,7 @@ const CreateClient = () => {
 
     try {
       // Create the company
-      const { data: companyRows, error: companyError } = await supabase
+      const { data: company, error: companyError } = await supabase
         .from('companies')
         .insert({
           name: companyName,
@@ -78,28 +78,39 @@ const CreateClient = () => {
           currency: currency,
           gaap_standard: gaapStandard,
           fiscal_year_end: fiscalYearEnd
-        }, { returning: 'representation' });
+        })
+        .select()
+        .single();
 
       if (companyError) {
         throw companyError;
       }
 
-      const company = companyRows?.[0];
       if (!company) {
         throw new Error('Company was created but could not be retrieved.');
       }
 
-      // Create the user-company relationship
-      const { error: relationError } = await supabase
+      // The trigger should have already created the user-company relationship
+      // Let's verify it exists and create it if not
+      const { data: existingRelation } = await supabase
         .from('user_companies')
-        .insert({
-          user_id: user.id,
-          company_id: company.id,
-          role: 'admin', // Bookkeeper gets admin access to their clients
-        });
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('company_id', company.id)
+        .maybeSingle();
 
-      if (relationError) {
-        throw relationError;
+      if (!existingRelation) {
+        const { error: relationError } = await supabase
+          .from('user_companies')
+          .insert({
+            user_id: user.id,
+            company_id: company.id,
+            role: 'admin', // Bookkeeper gets admin access to their clients
+          });
+
+        if (relationError) {
+          throw relationError;
+        }
       }
 
       toast({
