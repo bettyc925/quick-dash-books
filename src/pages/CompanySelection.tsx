@@ -97,8 +97,8 @@ const CompanySelection = () => {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-qb-blue mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading your companies...</p>
+          </div>
         </div>
-      </div>
     );
   }
 
@@ -112,12 +112,14 @@ const CompanySelection = () => {
               Choose which company you'd like to work with
             </p>
           </div>
-          <Link to="/create-client">
-            <Button className="bg-qb-blue hover:bg-qb-blue-dark">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Client
-            </Button>
-          </Link>
+            {profile?.role?.startsWith('bookkeeper') ? (
+              <Link to="/create-client">
+                <Button className="bg-qb-blue hover:bg-qb-blue-dark">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Client
+                </Button>
+              </Link>
+            ) : null}
         </div>
 
         {companies.length === 0 ? (
@@ -127,12 +129,14 @@ const CompanySelection = () => {
             <p className="text-muted-foreground mb-6">
               Start by adding your first company
             </p>
-            <Link to="/create-client">
-              <Button className="bg-qb-blue hover:bg-qb-blue-dark">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Your First Company
-              </Button>
-            </Link>
+            {profile?.role?.startsWith('bookkeeper') ? (
+              <Link to="/create-client">
+                <Button className="bg-qb-blue hover:bg-qb-blue-dark">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Your First Company
+                </Button>
+              </Link>
+            ) : null}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

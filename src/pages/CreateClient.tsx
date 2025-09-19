@@ -39,6 +39,17 @@ const CreateClient = () => {
     }
   }, [user, profile, navigate]);
 
+  useEffect(() => {
+    if (user && profile && !profile.role?.startsWith('bookkeeper')) {
+      toast({
+        variant: "destructive",
+        title: "Insufficient Permissions",
+        description: "Only bookkeepers can create client companies.",
+      });
+      navigate('/dashboard');
+    }
+  }, [user, profile, navigate, toast]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -97,10 +108,14 @@ const CreateClient = () => {
       navigate(`/dashboard?company=${company.id}`);
 
     } catch (error: any) {
+      const message = typeof error?.message === 'string' ? error.message : String(error);
+      const friendly = message.includes('violates row-level security')
+        ? 'Access denied by security policy. Make sure your profile setup is complete and you have the correct role.'
+        : message || 'Failed to create client.';
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message || "Failed to create client.",
+        description: friendly,
       });
     }
 
