@@ -66,7 +66,7 @@ const CreateClient = () => {
 
     try {
       // Create the company
-      const { data: company, error: companyError } = await supabase
+      const { data: companyRows, error: companyError } = await supabase
         .from('companies')
         .insert({
           name: companyName,
@@ -78,12 +78,15 @@ const CreateClient = () => {
           currency: currency,
           gaap_standard: gaapStandard,
           fiscal_year_end: fiscalYearEnd
-        })
-        .select()
-        .single();
+        }, { returning: 'representation' });
 
       if (companyError) {
         throw companyError;
+      }
+
+      const company = companyRows?.[0];
+      if (!company) {
+        throw new Error('Company was created but could not be retrieved.');
       }
 
       // Create the user-company relationship
