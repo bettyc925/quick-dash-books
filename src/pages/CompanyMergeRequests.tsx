@@ -457,10 +457,10 @@ export default function CompanyMergeRequests() {
                           <div className="flex-1">
                             <h4 className="font-medium text-yellow-900 mb-1">Security Verification Required</h4>
                             <p className="text-yellow-800 text-sm mb-2">
-                              Verification Code: <code className="bg-yellow-200 px-2 py-1 rounded font-mono">{request.verification_code}</code>
+                              A secure verification code has been generated for this request.
                             </p>
                             <p className="text-yellow-700 text-sm">
-                              This code must be entered during approval to confirm you have authorization to merge these companies.
+                              The verification code must be entered during approval to confirm you have authorization to merge these companies. Contact the request creator for the verification code.
                             </p>
                           </div>
                         </div>

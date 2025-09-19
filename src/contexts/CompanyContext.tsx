@@ -33,16 +33,16 @@ export const CompanyProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
   const [selectedClient, setSelectedClient] = useState<Company | null>(null);
 
-  // Load selections from localStorage on mount
+  // Load selections from sessionStorage on mount for better security
   useEffect(() => {
-    const storedBusiness = localStorage.getItem('selectedBusiness');
-    const storedClient = localStorage.getItem('selectedClient');
+    const storedBusiness = sessionStorage.getItem('selectedBusiness');
+    const storedClient = sessionStorage.getItem('selectedClient');
     
     if (storedBusiness) {
       try {
         setSelectedBusiness(JSON.parse(storedBusiness));
       } catch (error) {
-        localStorage.removeItem('selectedBusiness');
+        sessionStorage.removeItem('selectedBusiness');
       }
     }
     
@@ -50,57 +50,34 @@ export const CompanyProvider: React.FC<{ children: React.ReactNode }> = ({ child
       try {
         setSelectedClient(JSON.parse(storedClient));
       } catch (error) {
-        localStorage.removeItem('selectedClient');
+        sessionStorage.removeItem('selectedClient');
       }
     }
   }, []);
 
-  // Cross-tab synchronization - listen for storage changes from other tabs
+  // Auto-cleanup selections after inactivity
   useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'selectedBusiness' && e.newValue) {
-        try {
-          const newBusiness = JSON.parse(e.newValue);
-          setSelectedBusiness(newBusiness);
-        } catch (error) {
-          console.error('Error parsing selectedBusiness from storage event:', error);
-        }
-      }
-      
-      if (e.key === 'selectedClient' && e.newValue) {
-        try {
-          const newClient = JSON.parse(e.newValue);
-          setSelectedClient(newClient);
-        } catch (error) {
-          console.error('Error parsing selectedClient from storage event:', error);
-        }
-      }
-      
-      // Handle clearing of selections from other tabs
-      if (e.key === 'selectedBusiness' && e.newValue === null) {
-        setSelectedBusiness(null);
-      }
-      
-      if (e.key === 'selectedClient' && e.newValue === null) {
-        setSelectedClient(null);
-      }
-    };
+    const timeout = setTimeout(() => {
+      // Clear selections after 30 minutes of inactivity
+      setSelectedBusiness(null);
+      setSelectedClient(null);
+    }, 30 * 60 * 1000);
 
-    // Listen for storage changes from other tabs
-    window.addEventListener('storage', handleStorageChange);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
+    return () => clearTimeout(timeout);
+  }, [selectedBusiness, selectedClient]);
 
-  // Clear selections when user signs out
+  // Clear selections when user signs out and cleanup storage
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (event === 'SIGNED_OUT') {
           setSelectedBusiness(null);
           setSelectedClient(null);
+          // Clear all sensitive data from storage
+          sessionStorage.removeItem('selectedBusiness');
+          sessionStorage.removeItem('selectedClient');
+          localStorage.removeItem('selectedBusiness');
+          localStorage.removeItem('selectedClient');
         }
       }
     );
@@ -108,20 +85,20 @@ export const CompanyProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return () => subscription.unsubscribe();
   }, []);
 
-  // Save selections to localStorage when they change
+  // Save selections to sessionStorage for better security
   useEffect(() => {
     if (selectedBusiness) {
-      localStorage.setItem('selectedBusiness', JSON.stringify(selectedBusiness));
+      sessionStorage.setItem('selectedBusiness', JSON.stringify(selectedBusiness));
     } else {
-      localStorage.removeItem('selectedBusiness');
+      sessionStorage.removeItem('selectedBusiness');
     }
   }, [selectedBusiness]);
 
   useEffect(() => {
     if (selectedClient) {
-      localStorage.setItem('selectedClient', JSON.stringify(selectedClient));
+      sessionStorage.setItem('selectedClient', JSON.stringify(selectedClient));
     } else {
-      localStorage.removeItem('selectedClient');
+      sessionStorage.removeItem('selectedClient');
     }
   }, [selectedClient]);
 

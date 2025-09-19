@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { sanitizeText, sanitizeEmail, sanitizePhone, sanitizeCompanyName, validatePasswordStrength } from '@/utils/inputSanitization';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -50,7 +51,20 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const { error } = await signIn(loginEmail, loginPassword);
+    // Sanitize inputs
+    const sanitizedEmail = sanitizeEmail(loginEmail);
+    
+    if (!sanitizedEmail || !loginPassword) {
+      toast({
+        title: "Invalid Input",
+        description: "Please provide valid email and password.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    const { error } = await signIn(sanitizedEmail, loginPassword);
 
     if (error) {
       toast({
@@ -72,12 +86,42 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const { error } = await signUp(signupEmail, signupPassword, {
-      companyName,
+    // Sanitize all inputs
+    const sanitizedEmail = sanitizeEmail(signupEmail);
+    const sanitizedFirstName = sanitizeText(firstName);
+    const sanitizedLastName = sanitizeText(lastName);
+    const sanitizedCompanyName = sanitizeCompanyName(companyName);
+    const sanitizedPhone = sanitizePhone(phone);
+    
+    // Validate inputs
+    if (!sanitizedEmail || !sanitizedFirstName || !sanitizedLastName || !sanitizedCompanyName) {
+      toast({
+        title: "Invalid Input",
+        description: "Please provide valid information for all required fields.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    // Validate password strength
+    const passwordValidation = validatePasswordStrength(signupPassword);
+    if (!passwordValidation.isValid) {
+      toast({
+        title: "Weak Password",
+        description: passwordValidation.message,
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    const { error } = await signUp(sanitizedEmail, signupPassword, {
+      companyName: sanitizedCompanyName,
       userType,
-      firstName,
-      lastName,
-      phone
+      firstName: sanitizedFirstName,
+      lastName: sanitizedLastName,
+      phone: sanitizedPhone
     });
 
     if (error) {
@@ -100,7 +144,20 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const { error } = await resetPassword(resetEmail);
+    // Sanitize email input
+    const sanitizedEmail = sanitizeEmail(resetEmail);
+    
+    if (!sanitizedEmail) {
+      toast({
+        title: "Invalid Email",
+        description: "Please provide a valid email address.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    const { error } = await resetPassword(sanitizedEmail);
 
     if (error) {
       toast({

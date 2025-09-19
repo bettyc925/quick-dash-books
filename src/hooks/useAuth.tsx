@@ -2,6 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useIdleTimer } from './useIdleTimer';
+import { isRateLimited, recordAttempt } from '@/utils/rateLimiting';
+import { logSecurityEvent } from '@/utils/securityLogger';
 
 interface Profile {
   id: string;
@@ -56,9 +58,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOutUser = async () => {
+    if (user) {
+      await logSecurityEvent({
+        type: 'auth_logout',
+        userId: user.id,
+        email: user.email,
+      });
+    }
+    
     // Clear selected business and client when signing out
     localStorage.removeItem('selectedBusiness');
     localStorage.removeItem('selectedClient');
+    sessionStorage.removeItem('selectedBusiness');
+    sessionStorage.removeItem('selectedClient');
     await supabase.auth.signOut();
   };
 
@@ -118,6 +130,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     lastName: string;
     phone?: string;
   }) => {
+    // Check rate limiting
+    const rateLimitCheck = isRateLimited('signup', email);
+    if (rateLimitCheck.limited) {
+      return {
+        error: {
+          message: `Too many signup attempts. Please try again in ${Math.ceil((rateLimitCheck.remainingTime || 0) / 60)} minutes.`
+        }
+      };
+    }
+
     const redirectUrl = `${window.location.origin}/profile-setup`;
     
     const { error } = await supabase.auth.signUp({
@@ -134,21 +156,72 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
       },
     });
+
+    // Record the attempt
+    recordAttempt('signup', email, !error);
+
     return { error };
   };
 
   const signIn = async (email: string, password: string) => {
+    // Check rate limiting
+    const rateLimitCheck = isRateLimited('login', email);
+    if (rateLimitCheck.limited) {
+      await logSecurityEvent({
+        type: 'rate_limit_exceeded',
+        email,
+        details: { operation: 'login', remainingTime: rateLimitCheck.remainingTime }
+      });
+      
+      return {
+        error: {
+          message: `Too many login attempts. Please try again in ${Math.ceil((rateLimitCheck.remainingTime || 0) / 60)} minutes.`
+        }
+      };
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+
+    // Record the attempt and log the event
+    recordAttempt('login', email, !error);
+    
+    if (error) {
+      await logSecurityEvent({
+        type: 'auth_login_failure',
+        email,
+        details: { error: error.message }
+      });
+    } else {
+      await logSecurityEvent({
+        type: 'auth_login_success',
+        email
+      });
+    }
+
     return { error };
   };
 
   const resetPassword = async (email: string) => {
+    // Check rate limiting
+    const rateLimitCheck = isRateLimited('passwordReset', email);
+    if (rateLimitCheck.limited) {
+      return {
+        error: {
+          message: `Too many password reset attempts. Please try again in ${Math.ceil((rateLimitCheck.remainingTime || 0) / 60)} minutes.`
+        }
+      };
+    }
+
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth`,
     });
+
+    // Record the attempt
+    recordAttempt('passwordReset', email, !error);
+
     return { error };
   };
 
