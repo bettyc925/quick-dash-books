@@ -11,7 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import Sales from "./pages/Sales";
 import Expenses from "./pages/Expenses";
 import Banking from "./pages/Banking";
-import Reports from "./pages/Reports";
+import Tasks from "./pages/Tasks";
 import Accountant from "./pages/Accountant";
 import Payroll from "./pages/Payroll";
 import Taxes from "./pages/Taxes";
@@ -138,7 +138,7 @@ const AppRoutes = () => {
       <Route path="/accountant" element={<ProtectedRoute><Accountant /></ProtectedRoute>} />
       <Route path="/payroll" element={<ProtectedRoute><Payroll /></ProtectedRoute>} />
       <Route path="/taxes" element={<ProtectedRoute><Taxes /></ProtectedRoute>} />
-      <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+      <Route path="/tasks" element={<ProtectedRoute><Tasks /></ProtectedRoute>} />
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
     </Routes>
