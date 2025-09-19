@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 import { CompanyProvider, useCompany } from "./contexts/CompanyContext";
+import { ErrorBoundary } from '@/components/ui/error-boundary';
+import SecurityAuditTrail from '@/components/SecurityAuditTrail';
 import Dashboard from "./pages/Dashboard";
 import Sales from "./pages/Sales";
 import Expenses from "./pages/Expenses";
@@ -143,17 +145,22 @@ const AppRoutes = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <CompanyProvider>
-            <AppRoutes />
-          </CompanyProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
+    <ErrorBoundary>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AuthProvider>
+            <CompanyProvider>
+              <ErrorBoundary>
+                <AppRoutes />
+              </ErrorBoundary>
+              <SecurityAuditTrail />
+            </CompanyProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ErrorBoundary>
   </QueryClientProvider>
 );
 

@@ -33,6 +33,17 @@ const RATE_LIMITS: Record<string, RateLimitConfig> = {
     windowMs: 60 * 60 * 1000, // 1 hour
     lockoutMs: 30 * 60 * 1000, // 30 minutes lockout
   },
+  // Rate limiting configurations for different merge operations
+  companyMergeRequest: {
+    maxAttempts: 3,
+    windowMs: 60 * 60 * 1000, // 1 hour
+    lockoutMs: 30 * 60 * 1000, // 30 minutes lockout
+  },
+  mergeRequestApproval: {
+    maxAttempts: 5,
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    lockoutMs: 30 * 60 * 1000, // 30 minutes lockout
+  },
 };
 
 /**

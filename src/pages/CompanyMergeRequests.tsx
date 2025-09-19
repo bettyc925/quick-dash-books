@@ -13,6 +13,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Merge, Plus, Shield, AlertTriangle, Check, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { isRateLimited, recordAttempt } from '@/utils/rateLimiting';
+import { logSecurityEvent } from '@/utils/securityLogger';
+import { sanitizeText, sanitizeTextArea } from '@/utils/inputSanitization';
 
 interface MergeRequest {
   id: string;
@@ -72,16 +75,46 @@ export default function CompanyMergeRequests() {
       return;
     }
 
+    const user = (await supabase.auth.getUser()).data.user;
+    if (!user) return;
+
+    // Check rate limiting
+    const rateLimitCheck = isRateLimited('companyMergeRequest', user.id);
+    if (rateLimitCheck.limited) {
+      toast({
+        title: "Too many requests",
+        description: `Please wait ${rateLimitCheck.remainingTime} seconds before creating another merge request.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
+      // Sanitize inputs
+      const sanitizedReason = sanitizeTextArea(newRequest.reason);
+
       const { error } = await supabase
         .from('company_merge_requests')
         .insert([{
           ...newRequest,
-          requested_by: (await supabase.auth.getUser()).data.user?.id,
+          reason: sanitizedReason,
+          requested_by: user.id,
           verification_code: '' // Will be set by trigger
         }]);
 
       if (error) throw error;
+
+      // Record successful attempt and log security event
+      recordAttempt('companyMergeRequest', user.id, true);
+      await logSecurityEvent({
+        type: 'company_merge_request',
+        userId: user.id,
+        details: {
+          sourceCompanyId: newRequest.source_company_id,
+          targetCompanyId: newRequest.target_company_id,
+          reason: sanitizedReason
+        }
+      });
 
       toast({
         title: "Success",
@@ -96,9 +129,12 @@ export default function CompanyMergeRequests() {
       });
       loadRequests();
     } catch (error: any) {
+      // Record failed attempt
+      recordAttempt('companyMergeRequest', user.id, false);
+      
       toast({
         title: "Error creating request",
-        description: error.message,
+        description: "Unable to create merge request. Please try again.",
         variant: "destructive",
       });
     }
@@ -191,7 +227,34 @@ export default function CompanyMergeRequests() {
       return;
     }
 
+    const user = (await supabase.auth.getUser()).data.user;
+    if (!user) return;
+
+    // Check rate limiting for approvals
+    const rateLimitCheck = isRateLimited('mergeRequestApproval', user.id);
+    if (rateLimitCheck.limited) {
+      toast({
+        title: "Too many attempts",
+        description: `Please wait ${rateLimitCheck.remainingTime} seconds before trying again.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (approvalForm.verification_code !== selectedRequest.verification_code) {
+      // Record failed verification attempt
+      recordAttempt('mergeRequestApproval', user.id, false);
+      
+      await logSecurityEvent({
+        type: 'suspicious_activity',
+        userId: user.id,
+        details: {
+          action: 'invalid_merge_verification_code',
+          mergeRequestId: selectedRequest.id,
+          enteredCode: 'REDACTED'
+        }
+      });
+
       toast({
         title: "Invalid verification code",
         description: "The verification code does not match",
@@ -201,15 +264,18 @@ export default function CompanyMergeRequests() {
     }
 
     try {
+      // Sanitize notes input
+      const sanitizedNotes = sanitizeTextArea(approvalForm.notes);
+
       // Create approval record
       const { error: approvalError } = await supabase
         .from('merge_request_approvals')
         .insert([{
           merge_request_id: selectedRequest.id,
-          approver_id: (await supabase.auth.getUser()).data.user?.id,
+          approver_id: user.id,
           verification_code_entered: approvalForm.verification_code,
           company_relationship_confirmed: approvalForm.company_relationship_confirmed,
-          notes: approvalForm.notes
+          notes: sanitizedNotes
         }]);
 
       if (approvalError) throw approvalError;
@@ -219,12 +285,24 @@ export default function CompanyMergeRequests() {
         .from('company_merge_requests')
         .update({
           status: 'approved',
-          approver_id: (await supabase.auth.getUser()).data.user?.id,
+          approver_id: user.id,
           approved_at: new Date().toISOString()
         })
         .eq('id', selectedRequest.id);
 
       if (updateError) throw updateError;
+
+      // Record successful approval and log security event
+      recordAttempt('mergeRequestApproval', user.id, true);
+      await logSecurityEvent({
+        type: 'company_merge_approved',
+        userId: user.id,
+        details: {
+          mergeRequestId: selectedRequest.id,
+          sourceCompanyId: selectedRequest.source_company_id,
+          targetCompanyId: selectedRequest.target_company_id
+        }
+      });
 
       toast({
         title: "Success",
@@ -240,26 +318,45 @@ export default function CompanyMergeRequests() {
       });
       loadRequests();
     } catch (error: any) {
+      // Record failed attempt
+      recordAttempt('mergeRequestApproval', user.id, false);
+      
       toast({
         title: "Error approving request",
-        description: error.message,
+        description: "Unable to approve merge request. Please try again.",
         variant: "destructive",
       });
     }
   };
 
   const rejectRequest = async (requestId: string, reason: string) => {
+    const user = (await supabase.auth.getUser()).data.user;
+    if (!user) return;
+
     try {
+      // Sanitize rejection reason
+      const sanitizedReason = sanitizeTextArea(reason);
+
       const { error } = await supabase
         .from('company_merge_requests')
         .update({
           status: 'rejected',
-          rejection_reason: reason,
-          approver_id: (await supabase.auth.getUser()).data.user?.id
+          rejection_reason: sanitizedReason,
+          approver_id: user.id
         })
         .eq('id', requestId);
 
       if (error) throw error;
+
+      // Log security event for rejection
+      await logSecurityEvent({
+        type: 'company_merge_rejected',
+        userId: user.id,
+        details: {
+          mergeRequestId: requestId,
+          rejectionReason: sanitizedReason
+        }
+      });
 
       toast({
         title: "Success",
@@ -270,7 +367,7 @@ export default function CompanyMergeRequests() {
     } catch (error: any) {
       toast({
         title: "Error rejecting request",
-        description: error.message,
+        description: "Unable to reject merge request. Please try again.",
         variant: "destructive",
       });
     }
