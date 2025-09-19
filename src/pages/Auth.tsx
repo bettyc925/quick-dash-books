@@ -40,17 +40,6 @@ const Auth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // TEMPORARY: Force logout for debugging
-    const forceLogout = async () => {
-      await supabase.auth.signOut();
-      localStorage.clear();
-      sessionStorage.clear();
-      window.location.reload();
-    };
-    
-    // Uncomment this line to force logout:
-    forceLogout();
-    
     if (user) {
       // Force redirect to company selection if user is logged in
       window.location.href = '/company-selection';
