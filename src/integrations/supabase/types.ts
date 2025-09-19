@@ -312,6 +312,278 @@ export type Database = {
         }
         Relationships: []
       }
+      task_activities: {
+        Row: {
+          activity_type: string
+          content: string | null
+          created_at: string
+          id: string
+          metadata: Json | null
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          activity_type: string
+          content?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          activity_type?: string
+          content?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_activities_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_automations: {
+        Row: {
+          action_config: Json
+          action_type: string
+          company_id: string
+          created_at: string
+          created_by: string
+          id: string
+          is_active: boolean
+          last_run: string | null
+          name: string
+          next_run: string | null
+          trigger_config: Json
+          trigger_type: string
+          updated_at: string
+        }
+        Insert: {
+          action_config?: Json
+          action_type: string
+          company_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          is_active?: boolean
+          last_run?: string | null
+          name: string
+          next_run?: string | null
+          trigger_config?: Json
+          trigger_type: string
+          updated_at?: string
+        }
+        Update: {
+          action_config?: Json
+          action_type?: string
+          company_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          is_active?: boolean
+          last_run?: string | null
+          name?: string
+          next_run?: string | null
+          trigger_config?: Json
+          trigger_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_automations_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_locks: {
+        Row: {
+          expires_at: string
+          id: string
+          locked_at: string
+          locked_by: string
+          task_id: string
+        }
+        Insert: {
+          expires_at?: string
+          id?: string
+          locked_at?: string
+          locked_by: string
+          task_id: string
+        }
+        Update: {
+          expires_at?: string
+          id?: string
+          locked_at?: string
+          locked_by?: string
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_locks_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: true
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_templates: {
+        Row: {
+          assigned_role: string | null
+          automation_rules: Json | null
+          category: string
+          checklist_items: Json | null
+          company_id: string
+          created_at: string
+          created_by: string
+          description: string | null
+          due_day_of_month: number | null
+          estimated_hours: number | null
+          id: string
+          is_recurring: boolean
+          name: string
+          priority: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_role?: string | null
+          automation_rules?: Json | null
+          category?: string
+          checklist_items?: Json | null
+          company_id: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          due_day_of_month?: number | null
+          estimated_hours?: number | null
+          id?: string
+          is_recurring?: boolean
+          name: string
+          priority?: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_role?: string | null
+          automation_rules?: Json | null
+          category?: string
+          checklist_items?: Json | null
+          company_id?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          due_day_of_month?: number | null
+          estimated_hours?: number | null
+          id?: string
+          is_recurring?: boolean
+          name?: string
+          priority?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_templates_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          actual_hours: number | null
+          assigned_by: string | null
+          assigned_to: string | null
+          category: string
+          checklist_items: Json | null
+          company_id: string
+          completed_at: string | null
+          completed_by: string | null
+          completion_notes: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          due_date: string | null
+          estimated_hours: number | null
+          id: string
+          name: string
+          priority: string
+          status: string
+          template_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          actual_hours?: number | null
+          assigned_by?: string | null
+          assigned_to?: string | null
+          category?: string
+          checklist_items?: Json | null
+          company_id: string
+          completed_at?: string | null
+          completed_by?: string | null
+          completion_notes?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          due_date?: string | null
+          estimated_hours?: number | null
+          id?: string
+          name: string
+          priority?: string
+          status?: string
+          template_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          actual_hours?: number | null
+          assigned_by?: string | null
+          assigned_to?: string | null
+          category?: string
+          checklist_items?: Json | null
+          company_id?: string
+          completed_at?: string | null
+          completed_by?: string | null
+          completion_notes?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          due_date?: string | null
+          estimated_hours?: number | null
+          id?: string
+          name?: string
+          priority?: string
+          status?: string
+          template_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "task_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_companies: {
         Row: {
           company_id: string
@@ -349,6 +621,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_expired_task_locks: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       generate_verification_code: {
         Args: Record<PropertyKey, never>
         Returns: string
