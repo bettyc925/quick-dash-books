@@ -1,73 +1,102 @@
-# Welcome to your Lovable project
+# Accounting Dashboard - React/TypeScript Frontend
 
-## Project info
+## ⚠️ IMPORTANT: This is NOT a Python Project
 
-**URL**: https://lovable.dev/projects/489330a7-8ed9-4552-b201-b3df6bb064c0
+This is a **React/TypeScript frontend application** with Supabase backend. There are **no Python files** like `app/`, `requirements.txt`, or Alembic migrations.
 
-## How can I edit this code?
+## Quick Start for PyCharm
 
-There are several ways of editing your application.
+### 1. Prerequisites
+- Node.js 18+ and npm (NOT Python)
+- PyCharm with Node.js plugin
 
-**Use Lovable**
+### 2. Setup
+```bash
+# Install dependencies (equivalent to pip install -r requirements.txt)
+npm install
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/489330a7-8ed9-4552-b201-b3df6bb064c0) and start prompting.
+# Create environment file
+cp .env.example .env
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server (equivalent to python manage.py runserver)
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### 3. Access Application
+- **Development**: http://localhost:8080
+- **Production Build**: `npm run build`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Project Structure
 
-**Use GitHub Codespaces**
+This is a **frontend-only React project**:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```
+├── package.json              # Dependencies (like requirements.txt)
+├── .env                      # Environment variables
+├── src/                      # Source code (React components)
+│   ├── main.tsx             # Entry point
+│   ├── App.tsx              # Main app component
+│   ├── components/          # UI components
+│   ├── pages/               # Page components
+│   └── integrations/        # Supabase integration
+├── supabase/                # Database migrations (SQL, not Alembic)
+│   └── migrations/          # SQL files
+└── public/                  # Static assets
+```
 
-## What technologies are used for this project?
+## Tech Stack
 
-This project is built with:
+- **Frontend**: React 18, TypeScript, Vite
+- **UI**: Tailwind CSS, Radix UI, shadcn/ui  
+- **Backend**: Supabase (fully managed cloud)
+- **State**: TanStack Query
+- **Routing**: React Router DOM
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Key Features
 
-## How can I deploy this project?
+- Dashboard with financial overview
+- Task management and automation
+- Client and company management
+- Financial reporting
+- Multi-company support
+- User authentication and roles
+- Responsive design
 
-Simply open [Lovable](https://lovable.dev/projects/489330a7-8ed9-4552-b201-b3df6bb064c0) and click on Share -> Publish.
+## For PyCharm Users
 
-## Can I connect a custom domain to my Lovable project?
+### Run Configurations
+1. **Dev Server**: `npm run dev`
+2. **Build**: `npm run build` 
+3. **Lint**: `npm run lint`
 
-Yes, you can!
+### File Types
+- `.tsx` - React TypeScript components
+- `.ts` - TypeScript files
+- `.css` - Stylesheets with Tailwind
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Database
+- **Backend**: Supabase cloud (no local setup needed)
+- **Migrations**: SQL files in `supabase/migrations/`
+- **Connection**: JavaScript client library
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Environment Variables (.env)
+
+```env
+VITE_SUPABASE_PROJECT_ID="jbywtxlcdosupgzwkivh"
+VITE_SUPABASE_PUBLISHABLE_KEY="your-key-here"
+VITE_SUPABASE_URL="https://jbywtxlcdosupgzwkivh.supabase.co"
+```
+
+## Commands (npm, not pip/python)
+
+```bash
+npm install          # Install dependencies
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
+npm run lint         # Run linting
+```
+
+## Deployment
+
+Deploy via [Lovable](https://lovable.dev/projects/489330a7-8ed9-4552-b201-b3df6bb064c0) or build static files with `npm run build`.
