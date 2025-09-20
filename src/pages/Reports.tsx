@@ -1,6 +1,9 @@
 import MainLayout from "@/components/Layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import ReportFilters from "@/components/ReportFilters";
+import FinancialReportHeader from "@/components/FinancialReportHeader";
+import ReportFooter from "@/components/ReportFooter";
 import { 
   FileText,
   TrendingUp,
@@ -109,6 +112,20 @@ const Reports = () => {
       subNavigation={reportsSubNav}
     >
       <div className="space-y-6">
+        {/* Financial Report Header */}
+        <FinancialReportHeader 
+          reportTitle="Financial Reports Overview"
+          reportPeriod="Current Period"
+          subtitle="Management Dashboard"
+        />
+
+        {/* Report Filters */}
+        <ReportFilters 
+          onFiltersChange={(filters) => {
+            // Apply report filters
+          }}
+        />
+
         {/* Quick Report Summary */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {quickReports.map((report) => {
@@ -235,6 +252,11 @@ const Reports = () => {
             </div>
           </CardContent>
         </Card>
+        
+        {/* Report Footer */}
+        <ReportFooter 
+          disclaimer="This overview contains summary data from all financial reports. Individual reports contain detailed information."
+        />
       </div>
     </MainLayout>
   );
