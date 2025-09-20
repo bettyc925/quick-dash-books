@@ -16,16 +16,16 @@ export default function SecurityAuditTrail() {
   const shouldHide = useMemo(() => {
     return location.pathname === '/auth';
   }, [location.pathname]);
-  
-  if (shouldHide) {
-    return null;
-  }
 
   useEffect(() => {
     if (isVisible) {
       setLogs(getSecurityLogs());
     }
   }, [isVisible]);
+  
+  if (shouldHide) {
+    return null;
+  }
 
   const getEventBadge = (type: string) => {
     const eventConfig = {
